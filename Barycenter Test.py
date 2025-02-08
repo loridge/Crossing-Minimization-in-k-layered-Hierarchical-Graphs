@@ -47,9 +47,28 @@ for node in G.nodes():
 pos = {}
 layer_height = 2
 for layer, nodes_in_layer in layered_pos.items():
+    print(nodes_in_layer)
+    print('\n')
     x_offset = -(len(nodes_in_layer) - 1) / 2  # Center nodes horizontally
     for i, node in enumerate(nodes_in_layer):
         pos[node] = (x_offset + i, -layer * layer_height)
+
+print(pos)
+plt.figure(figsize=(10, 8))
+nx.draw(
+    G, 
+    pos=pos, 
+    with_labels=True, 
+    node_size=2000, 
+    node_color="lightblue", 
+    font_size=10, 
+    font_weight="bold", 
+    arrows=True
+)
+
+# Display the graph
+plt.title("Three-Layer Graph with Barycenter Ordering Within Layers")
+plt.show()
 
 # Function to calculate barycenters for nodes within a layer based on neighbors in the previous layer
 def calculate_barycenters(current_layer_nodes, prev_layer_nodes, pos, G):

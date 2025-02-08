@@ -42,3 +42,24 @@ layered_pos = {0: [], 1: [], 2: []}
 for node in G.nodes():
     layer = G.nodes[node]['layer']
     layered_pos[layer].append(node)
+    
+# Initial placement (place the nodes in horizontal layers)
+pos = {}
+layer_height = 2
+for layer, nodes_in_layer in layered_pos.items():
+    print(nodes_in_layer)
+    print('\n')
+    x_offset = -(len(nodes_in_layer) - 1) / 2  # Center nodes horizontally
+    for i, node in enumerate(nodes_in_layer):
+        pos[node] = (x_offset + i, -layer * layer_height)
+        
+## Crossing function
+# objective functiion in literature
+def cross_count():
+    pass
+
+# Sifting function
+
+def sifting():
+    pass
+print(pos)
