@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-def node_neighbors(target: str, edges: list) -> list[str]:
+def node_neighbors(target: str, edges: list, fixed_layer_nodes: List[str]) -> list[str]:
     """
     Find all neighbors of a target node in a list of edges.
 
@@ -11,7 +11,7 @@ def node_neighbors(target: str, edges: list) -> list[str]:
         target (str): The target node label.
         edges (list): A list of edges, where each edge is represented as a dictionary
                       with a "nodes" key containing a list of two node labels.
-
+        fixed_layer_nodes (List[str]): The nodes in the fixed layer. Will be used for limiting the scope of the neighbors of a node in the free layer.
     Returns:
         list[str]: A list of node labels that are neighbors of the target node.
     """
@@ -20,7 +20,8 @@ def node_neighbors(target: str, edges: list) -> list[str]:
         edge_node_arr = edge_data["nodes"]
         if target in edge_node_arr:
             other_node = edge_node_arr[1] if edge_node_arr[0] == target else edge_node_arr[0]
-            neighbors.append(other_node)
+            if other_node in fixed_layer_nodes:                
+                neighbors.append(other_node)
     return neighbors
 
 
@@ -59,21 +60,22 @@ def u_prime_list_processor(target: str, pos: Dict[str, List[float]], layered_pos
 
     return u_prime_list
 
-def u_prime_neighbor_filter(target_u_prime: str, u_neighbor: str, edges: list, pos) -> List[str]:
+def u_prime_neighbor_filter(target_u_prime: str, u_neighbor: str, edges: list, fixed_layer_nodes: List[str], pos) -> List[str]:
     """
-    For a certain node u_prime, we filter its neighbors (list of v_primes) that satisfies v_prime > v.
+    For a certain node u_prime, we filter its neighbors (list of v_primes that are in fixed layer) that satisfies v_prime > v.
     v in this case is the u_neighbor.
     
     Args:
         target_u_prime (str): The node u_prime in which we will find its neighboring nodes
         u_neighbor (str): A neighbor node of u node where the x-coords of u_prime_neighbors will be compared.
-        edges (list[str]): List of edges 
+        edges (list[str]): List of edges. 
+        fixed_layer_nodes (List[str]): The nodes in the fixed layer. Will be used for limiting the scope of the neighbors of a node in the free layer.
         pos (Dict[str, List[float]]): A dictionary containing the positional data of the nodes.
                                       The keys are node labels, and the values are lists of two floats
                                       representing the (x, y) coordinates of the nodes.
     
     """ 
-    u_prime_neighbors = node_neighbors(target_u_prime, edges)
+    u_prime_neighbors = node_neighbors(target_u_prime, edges, fixed_layer_nodes)
     filtered_u_prime_neighbors = []
     for v_prime in u_prime_neighbors:
         v_prime_coords = pos[v_prime]
