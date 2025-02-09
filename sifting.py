@@ -1,6 +1,5 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-
 # Define the graph structure for a three-layer graph
 nodes = [
     {"id": "u1", "layer": 1},
@@ -53,6 +52,18 @@ for layer, nodes_in_layer in layered_pos.items():
     for i, node in enumerate(nodes_in_layer):
         pos[node] = (x_offset + i, -layer * layer_height)
         
+
+### temporary code
+filepath = './10nodes/grafo155.10.json'
+graph_file = open(filepath, 'r')
+
+content = graph_file.read()
+print(content) #debug
+
+graph_nodes = content["nodes"]
+
+graph_edges = content["edges"]
+
 ## Crossing function
 # objective functiion in literature
 def cross_count():
@@ -63,3 +74,5 @@ def cross_count():
 def sifting():
     pass
 print(pos)
+
+graph_file.close()
