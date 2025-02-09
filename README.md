@@ -12,3 +12,10 @@ Element naming conventions:
 - variables, package names, functions: snake_case
 - classes: CamelCase
 - constants: UPPERCASE
+
+
+## Major Bugs: 
+### Crossing Function does not work
+- if the fixed and free layer are reversed, the count goes way off.
+
+### Crossing Function and its helper is not optimized

@@ -1,1 +1,15 @@
+# Ignore all text files that are used for note-taking and progress tracking
 *.txt
+
+# Ignore Python bytecode files and cache directories
+__pycache__/
+*.pyc
+
+# Ignore virtual environment directories
+venv/
+env/
+
+# Ignore other files and directories
+.DS_Store
+.idea/
+.vscode/
