@@ -93,8 +93,8 @@ def cross_count(fixed_layer: list[str], free_layer: list[str], pos_data):
 
     Args:
         U is free, L is fixed
-        layer1_nodes (list of str): List of node labels in the first layer.
-        layer2_nodes (list of str): List of node labels in the second layer.
+        fixed_layer (list of str): List of node labels in the fixed layer.
+        free_layer (list of str): List of node labels in the free layer.
         pos_data (dict): Dictionary containing the positional data of the nodes.
                          The keys are node labels, and the values are (x, y) tuples
                          representing the positions of the nodes.
@@ -112,6 +112,7 @@ def cross_count(fixed_layer: list[str], free_layer: list[str], pos_data):
         for v_node in neighbor_u_node:
             u_prime_nodes = []
             # TODO: implement filling u_prime, list of node u that are positioned to the left of u
+            
             for u_prime in u_prime_nodes:
                 # TODO: implement filtering of nodes 
                 result = []

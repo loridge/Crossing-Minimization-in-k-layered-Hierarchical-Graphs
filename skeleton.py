@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 # Define the graph structure for a three-layer graph
+# skeleton code for initializing the graph
 nodes = [
     {"id": "u1", "layer": 1},
     {"id": "u2", "layer": 2},

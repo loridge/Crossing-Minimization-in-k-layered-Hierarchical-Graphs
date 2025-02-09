@@ -1,3 +1,8 @@
+from typing import Dict, List
+
+
+
+# Example usage
 edges = [
     {"nodes": ["u1", "u7"]},
     {"nodes": ["u1", "u6"]},
@@ -11,16 +16,18 @@ edges = [
     {"nodes": ["u5", "u2"]}
 ]
 
-target = "u1"
+layered_pos = {1: ['u1', 'u5'], 2: ['u2', 'u3', 'u4'], 0: ['u6', 'u7', 'u8']}
+pos = {
+    "u1": [-0.5, -2],
+    "u5": [0.5, -2],
+    "u2": [-1.0, -4],
+    "u3": [0.0, -4],
+    "u4": [1.0, -4],
+    "u6": [-1.0, 0],
+    "u7": [0.0, 0],
+    "u8": [1.0, 0]
+}
 
-neighbors = []
-
-for edge_data in edges:
-    edge_node_arr = edge_data["nodes"]
-    if target in edge_node_arr:
-        other_node = edge_node_arr[1] if edge_node_arr[0] == target else edge_node_arr[0]
-        neighbors.append(other_node)
-
-
-
-print(neighbors)
+target = "u7"
+a = u_prime_processor(target, pos, layered_pos)
+print(a)
