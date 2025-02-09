@@ -123,12 +123,16 @@ def cross_count(fixed_layer: list[str], free_layer: list[str], pos_data, edges, 
                 # TODO: implement filtering of nodes 
                 result = []                
                 result = u_prime_neighbor_filter(u_prime, v_node, edges, pos_data)
+                if len(result) != 0: ## for debugging
+                    print('U_node:')
+                    print(u_node)
+                    print(result)
                 crossing_total += len(result)
                 
     return crossing_total
 
-free_layer = layered_pos[1]
-fixed_layer = layered_pos[0]
+free_layer = layered_pos[0]
+fixed_layer = layered_pos[1]
 
 print(cross_count(fixed_layer, free_layer, pos, edges, layered_pos), 'COUNT')    
 

@@ -17,5 +17,5 @@ Element naming conventions:
 ## Major Bugs: 
 ### Crossing Function does not work
 - if the fixed and free layer are reversed, the count goes way off.
-
+- EDIT: the crossing function does not work as intended.
 ### Crossing Function and its helper is not optimized
