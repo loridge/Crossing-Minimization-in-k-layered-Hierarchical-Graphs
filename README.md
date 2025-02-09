@@ -2,3 +2,13 @@
 
 A project for CS 198/199 under the Algorithms and Complexity Laboratory - UP Diliman
 
+
+
+
+File naming convention:
+- snake case (e.g. crossing_util.py, cross.py)
+
+Element naming conventions:
+    variables, package names, functions: snake_case
+    classes: CamelCase
+    constants: UPPERCASE
