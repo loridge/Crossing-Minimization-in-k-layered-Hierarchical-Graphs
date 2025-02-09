@@ -1,6 +1,8 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import json
+from crossing_func import cross_count
+from crossing_utils import node_neighbors
 
 # Graph generation
 filepath = './10nodes/grafo155.10.json'
@@ -67,6 +69,7 @@ for node in G.nodes():
     layered_pos[depth].append(node)
 
 print(layered_pos, 'LAYERED POS')
+
 # Initial placement (place the nodes in horizontal layers)
 pos = {}
 layer_height = 2  # Vertical spacing between layers
@@ -81,8 +84,38 @@ print(json.dumps(pos, indent = 4))
 print('POS dict object!')
 
 # Sifting function
-def sifting():
+def sifting(free_layer: list[str], fixed_layer: list[str], edges: list):
+    """
+        Must output a rejuvenized freelayer positional xy values
+
+    Args:
+        free_layer (list[str]): _description_
+        fixed_layer (list[str]): _description_
+    """
+    
+    # Make a priority queue for nodes in descending order of their indegrees.
+    ## How do you handle ties? probably lexicographic ordering or their ordering in the free layer or just how python sorted it
+    ## element format (node, indegree)
+    
+    indeg_prio_queue = []
+    
+    for node in free_layer:
+        indeg_cnt = len(node_neighbors(node, edges, fixed_layer))
+        indeg_prio_queue.append((node, indeg_cnt))
+        
+    sorted_indeg_prio_queue = sorted(indeg_prio_queue, key=lambda x: x[1])
+    
+    # 
     pass
+
+
+free_layer_no = 1
+fixed_layer_no = 0
+free_layer = layered_pos[free_layer_no]
+fixed_layer = layered_pos[fixed_layer_no]
+
+sifting(free_layer, fixed_layer, edges)
+
 
 # Draw the graph
 plt.figure(figsize=(5, 3))
