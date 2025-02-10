@@ -43,7 +43,6 @@ def u_prime_list_processor(target: str, pos: Dict[str, List[float]], layered_pos
     """
     target_coords = pos[target]
     target_layer = int(target_coords[1] / -2)
-
     u_prime_list = []
 
     # Trivial case where the target node is the only node in that layer is ignored

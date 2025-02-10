@@ -1,8 +1,8 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import json
-from crossing_func import cross_count
-from crossing_utils import node_neighbors
+from crossing_function.crossing_func import cross_count
+from crossing_function.crossing_utils import node_neighbors
 import bisect 
 import itertools
 

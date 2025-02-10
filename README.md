@@ -36,3 +36,6 @@ the rest are scratch files or whatnot,
 - TODO: modularize the graph initialization code
 ### Crossing Function and its helper is not optimized
 - will change implementation as necessary, optimization is last prio for this.
+
+# Dataset used
+- the dataset used is made by Bartolomeo et al. https://osf.io/preprints/osf/qdyt9

@@ -1,7 +1,6 @@
 from crossing_function.crossing_utils import node_neighbors, u_prime_neighbor_filter, u_prime_list_processor
 
-## Crossing function
-# objective function in literature <stallman>
+# Crossing function or Objective Function
 def cross_count(fixed_layer: list[str], free_layer: list[str], pos_data, edges: list, layered_pos_data) -> int:
     """
     Calculate the number of edge crossings between two layers in a bipartite graph.
@@ -26,6 +25,7 @@ def cross_count(fixed_layer: list[str], free_layer: list[str], pos_data, edges: 
     #####
     # TODO: edit this functions and the helper functions so that fixed_layer will be used properly. for now it still uses the graph as a whole.
     # you wrote this on feb 9 2025 with implementation in mind, optimizations later
+    # UPDATE: feb-10, optimizations are sidelined.
     #####
     
     for u_node in free_layer:

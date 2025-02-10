@@ -1,5 +1,5 @@
 from typing import Dict, List
-from crossing_utils import node_neighbors
+from crossing_function.crossing_utils import node_neighbors
 
 
 # Example usage
