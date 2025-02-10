@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import json
 from crossing_func import cross_count
 from crossing_utils import node_neighbors
+import bisect 
+import itertools
 
 # Graph generation
 filepath = './10nodes/grafo155.10.json'
@@ -84,9 +86,9 @@ print(json.dumps(pos, indent = 4))
 print('POS dict object!')
 
 # Sifting function
-def sifting(free_layer: list[str], fixed_layer: list[str], edges: list):
+def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos):
     """
-        Must output a rejuvenized freelayer positional xy values
+        Must output a reordered freelayer positional xy values
 
     Args:
         free_layer (list[str]): _description_
@@ -94,27 +96,53 @@ def sifting(free_layer: list[str], fixed_layer: list[str], edges: list):
     """
     
     # Make a priority queue for nodes in descending order of their indegrees.
-    ## How do you handle ties? probably lexicographic ordering or their ordering in the free layer or just how python sorted it
-    ## element format (node, indegree)
-    
+    ## element format (node, indegree)    
     indeg_prio_queue = []
     
     for node in free_layer:
         indeg_cnt = len(node_neighbors(node, edges, fixed_layer))
         indeg_prio_queue.append((node, indeg_cnt))
         
-    sorted_indeg_prio_queue = sorted(indeg_prio_queue, key=lambda x: x[1])
+    # ditching the indegree values after the sorting has been done
+    sorted_indeg_prio_queue = [item for item, _ in sorted(indeg_prio_queue, key=lambda x: x[1], reverse=True)]
+    # are the indegree count needed for other purposes? it is only needed to sort
+    print(sorted(indeg_prio_queue, key=lambda x: x[1], reverse=True))
+    print(sorted_indeg_prio_queue)
     
+    # initialize current free layer order, based on how it was initialized earlier
+    # TODO: use the pos to rearrange free_layer, since free_layer only contains the nodes needed, not the order
+    current_layer_order = [] # wait lang, (node, x-coords)
+    # how will the elements of the layer order array look like?
+    for node in free_layer:
+        # access its x-coords position
+        # make a tuple on its x-coords
+        # use bisect to insert it
+        x_coord = pos[node][0]
+        node_info = (node, x_coord)
+        bisect.insort(current_layer_order, node_info)
+
+    print(current_layer_order)    
+    # X-COORD PROBLEM
+    # pag sinift mo ba, pano mag-aadjust x-coords?? how will it be recomputed?
+    # barycenter explicity uses it, but for sifting??
+    ## does it preserve the original x-coords na parang slot machine iinsert mo doon, or magbabago x-coords
+    
+    # sifting with new insertion, x-coords must be readjusted
+    # layer ordering is based on x-coords
+    ## how does sifting consider x-coordinates?
     # 
     pass
 
-
-free_layer_no = 1
-fixed_layer_no = 0
+    # will the output of this sifting function be array((node, x-coords)), then the pos dict will be edited at the layer-by-layer code or
+    # the graph as a whole???, but hey we are only localized in this view.
+    
+# note, the higher the layer number, the lower it is on the graph
+free_layer_no = 2
+fixed_layer_no = 1
 free_layer = layered_pos[free_layer_no]
 fixed_layer = layered_pos[fixed_layer_no]
 
-sifting(free_layer, fixed_layer, edges)
+sifting(free_layer, fixed_layer, edges, pos)
 
 
 # Draw the graph

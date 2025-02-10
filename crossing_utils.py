@@ -55,6 +55,7 @@ def u_prime_list_processor(target: str, pos: Dict[str, List[float]], layered_pos
                 continue
             else:
                 # if the x-coords of node is less than the x-coords of target node, push it to u_prime_list
+                # NOTE: coords are usually used for graph drawing, technically u can implement this using an ordered list
                 if pos[node][0] < target_coords[0]:
                     u_prime_list.append(node)
 
