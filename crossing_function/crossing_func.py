@@ -1,4 +1,4 @@
-from crossing_utils import node_neighbors, u_prime_neighbor_filter, u_prime_list_processor
+from crossing_function.crossing_utils import node_neighbors, u_prime_neighbor_filter, u_prime_list_processor
 
 ## Crossing function
 # objective function in literature <stallman>

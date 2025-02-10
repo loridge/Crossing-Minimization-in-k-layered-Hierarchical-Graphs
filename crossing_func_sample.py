@@ -1,7 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import json
-from crossing_utils import node_neighbors, u_prime_neighbor_filter, u_prime_list_processor
+from crossing_function.crossing_utils import node_neighbors, u_prime_neighbor_filter, u_prime_list_processor
 # Graph generation
 filepath = './10nodes/grafo155.10.json'
 graph_file = open(filepath, 'r')
