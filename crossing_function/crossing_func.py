@@ -1,7 +1,7 @@
 from crossing_function.crossing_utils import node_neighbors, u_prime_neighbor_filter, u_prime_list_processor
 
 # Crossing function or Objective Function
-def cross_count(fixed_layer: list[str], free_layer: list[str], pos_data, edges: list, layered_pos_data) -> int:
+def cross_count(fixed_layer: list[str], free_layer: list[str], pos_data, edges: list, layered_pos_data=None) -> int:
     """
     Calculate the number of edge crossings between two layers in a bipartite graph.
 
@@ -22,31 +22,20 @@ def cross_count(fixed_layer: list[str], free_layer: list[str], pos_data, edges: 
         int: The total number of edge crossings between the two layers.
     """
     crossing_total = 0
-    #####
-    # TODO: edit this functions and the helper functions so that fixed_layer will be used properly. for now it still uses the graph as a whole.
-    # you wrote this on feb 9 2025 with implementation in mind, optimizations later
-    # UPDATE: feb-10, optimizations are sidelined.
-    #####
     
     for u_node in free_layer:
         neighbor_u_node = []
-        # fill the neighbor u node; neighbors of u_node
         # TODO: implement filling of neighbor_u_node
         neighbor_u_node = node_neighbors(u_node, edges, fixed_layer)
-        # print(u_node, 'u_node and its neighbors:')
-        # print(neighbor_u_node, 'neighbors of this u_node, must be filtered to accomodate only of the previous layer')
         for v_node in neighbor_u_node:
             u_prime_nodes = []
             # TODO: implement filling u_prime, list of node u that are positioned to the left of u
-            u_prime_nodes = u_prime_list_processor(u_node, pos_data, layered_pos_data)
+            u_prime_nodes = u_prime_list_processor(u_node, pos_data, free_layer)
             for u_prime in u_prime_nodes:
                 # TODO: implement filtering of nodes 
                 result = []                
                 result = u_prime_neighbor_filter(u_prime, v_node, edges, fixed_layer, pos_data)
-                # if len(result) != 0: ## for debugging
-                #     print('U_node, v_node, u_prime:')
-                #     print(u_node, v_node, u_prime)
-                #     print(result)
+
                 crossing_total += len(result)
                 
     return crossing_total

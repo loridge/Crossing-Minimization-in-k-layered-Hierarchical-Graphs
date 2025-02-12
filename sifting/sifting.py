@@ -1,10 +1,13 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import json
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from crossing_function.crossing_func import cross_count
 from crossing_function.crossing_utils import node_neighbors
 import bisect 
 import itertools
+from sifting_utils import do_sifting
 
 # Graph generation
 filepath = './10nodes/grafo155.10.json'
@@ -18,14 +21,14 @@ nodes = data["nodes"]
 edges = data["edges"]
 
 nodes = [
-    {"id": "u1", "layer": 1},
-    {"id": "u2", "layer": 2},
-    {"id": "u3", "layer": 2},
-    {"id": "u4", "layer": 2},
-    {"id": "u5", "layer": 1},
-    {"id": "u6", "layer": 0},
-    {"id": "u7", "layer": 0},
-    {"id": "u8", "layer": 0}
+    {"id": "u1", "depth": 1},
+    {"id": "u2", "depth": 2},
+    {"id": "u3", "depth": 2},
+    {"id": "u4", "depth": 2},
+    {"id": "u5", "depth": 1},
+    {"id": "u6", "depth": 0},
+    {"id": "u7", "depth": 0},
+    {"id": "u8", "depth": 0}
 ]
 
 edges = [
@@ -46,7 +49,7 @@ G = nx.Graph()
 
 # Add nodes to the graph
 for node in nodes:
-    G.add_node(node["id"], depth=node["layer"])  # Use 'layer' as 'depth'
+    G.add_node(node["id"], depth=node["depth"])  # Use 'layer' as 'depth'
     
 # Add edges to the graph, ensuring no same-layer edges
 # Also remove the edges that are same-layer
@@ -89,13 +92,21 @@ print('POS dict object!')
 def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos):
     """
         Must output a reordered freelayer positional xy values
-
+        Sifting concerns about ordering decisions.
+        
+        
+        
+        output must be new graph positioning. 
     Args:
         free_layer (list[str]): _description_
         fixed_layer (list[str]): _description_
+        pos: contains the x-coordinates
     """
     
-    # Make a priority queue for nodes in descending order of their indegrees.
+    
+    
+    
+    # Make a PRIORITY QUEUE for nodes in descending order of their indegrees.
     ## element format (node, indegree)    
     indeg_prio_queue = []
     
@@ -103,34 +114,47 @@ def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos):
         indeg_cnt = len(node_neighbors(node, edges, fixed_layer))
         indeg_prio_queue.append((node, indeg_cnt))
         
-    # ditching the indegree values after the sorting has been done
-    sorted_indeg_prio_queue = [item for item, _ in sorted(indeg_prio_queue, key=lambda x: x[1], reverse=True)]
-    # are the indegree count needed for other purposes? it is only needed to sort
-    print(sorted(indeg_prio_queue, key=lambda x: x[1], reverse=True))
-    print(sorted_indeg_prio_queue)
+    sorted_indeg_prio_queue = [item for item, _ in sorted(indeg_prio_queue, key=lambda x: x[1], reverse=True)] # ditching the indegree values after the sorting has been done
+    # print(sorted(indeg_prio_queue, key=lambda x: x[1], reverse=True))
+    print("sorted_indeg_prio_queue", sorted_indeg_prio_queue)
     
     # initialize current free layer order, based on how it was initialized earlier
     # TODO: use the pos to rearrange free_layer, since free_layer only contains the nodes needed, not the order
-    current_layer_order = [] # wait lang, (node, x-coords)
-    # how will the elements of the layer order array look like?
+    current_layer_order = [] 
+
     for node in free_layer:
-        # access its x-coords position
-        # make a tuple on its x-coords
-        # use bisect to insert it
         x_coord = pos[node][0]
         node_info = (node, x_coord)
-        bisect.insort(current_layer_order, node_info)
+        bisect.insort(current_layer_order, node_info)   
+    
+    # now we assume that the order of current_layer_order is based on the order as stated in pos and not in the ordering seen in free_layer list
 
+    print("CORRECT CURRENT LAYER, not extracted - sifting")
     print(current_layer_order)    
+    current_layer_order=[node for node, _ in current_layer_order]
+    
+    for node in sorted_indeg_prio_queue:
+        new_layer_order = do_sifting(node, current_layer_order, fixed_layer, pos, edges)
+        current_layer_order = new_layer_order
+    
+    
+    
+    
+    
     # X-COORD PROBLEM
     # pag sinift mo ba, pano mag-aadjust x-coords?? how will it be recomputed?
+    # the crossing function only uses the positions, but let us check how this will work if only the node are given
     # barycenter explicity uses it, but for sifting??
     ## does it preserve the original x-coords na parang slot machine iinsert mo doon, or magbabago x-coords
     
     # sifting with new insertion, x-coords must be readjusted
     # layer ordering is based on x-coords
     ## how does sifting consider x-coordinates?
-    # 
+    
+    # READJUST NEW GRAPH COORDINATES
+    
+    
+    # return new graph coords
     pass
 
     # will the output of this sifting function be array((node, x-coords)), then the pos dict will be edited at the layer-by-layer code or
