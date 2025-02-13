@@ -14,7 +14,6 @@ filepath = './10nodes/grafo155.10.json'
 graph_file = open(filepath, 'r')
 
 data = json.load(graph_file)
-print(type(data), 'debug') #debug
 
 nodes = data["nodes"]
 
@@ -126,17 +125,13 @@ def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos):
     
     # now we assume that the order of current_layer_order is based on the order as stated in pos and not in the ordering seen in free_layer list
 
-    print("CORRECT CURRENT LAYER, not extracted - sifting")
+    print("CURRENT LAYER, not extracted - sifting")
     print(current_layer_order)    
     current_layer_order=[node for node, _ in current_layer_order]
     
     for node in sorted_indeg_prio_queue:
         new_layer_order = do_sifting(node, current_layer_order, fixed_layer, pos, edges)
         current_layer_order = new_layer_order
-    
-    
-    
-    
     
     # X-COORD PROBLEM
     # pag sinift mo ba, pano mag-aadjust x-coords?? how will it be recomputed?
@@ -163,9 +158,12 @@ fixed_layer_no = 1
 free_layer = layered_pos[free_layer_no]
 fixed_layer = layered_pos[fixed_layer_no]
 
-sifting(free_layer, fixed_layer, edges, pos)
+minimized_layer = sifting(free_layer, fixed_layer, edges, pos)
 
-
+print("original layer")
+print(free_layer)
+print("minimizedlayer")
+print(minimized_layer)
 # Draw the graph
 plt.figure(figsize=(5, 3))
 nx.draw(
