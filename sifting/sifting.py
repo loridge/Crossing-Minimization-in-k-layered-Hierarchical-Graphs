@@ -101,10 +101,7 @@ def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos):
         free_layer (list[str]): _description_
         fixed_layer (list[str]): _description_
         pos: contains the x-coordinates
-    """
-    
-    
-    
+    """    
     
     # Make a PRIORITY QUEUE for nodes in descending order of their indegrees.
     ## element format (node, indegree)    
@@ -116,7 +113,7 @@ def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos):
         
     sorted_indeg_prio_queue = [item for item, _ in sorted(indeg_prio_queue, key=lambda x: x[1], reverse=True)] # ditching the indegree values after the sorting has been done
     # print(sorted(indeg_prio_queue, key=lambda x: x[1], reverse=True))
-    print("sorted_indeg_prio_queue", sorted_indeg_prio_queue)
+    # print("sorted_indeg_prio_queue", sorted_indeg_prio_queue)
     
     # initialize current free layer order, based on how it was initialized earlier
     # TODO: use the pos to rearrange free_layer, since free_layer only contains the nodes needed, not the order
@@ -154,8 +151,8 @@ def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos):
     # READJUST NEW GRAPH COORDINATES
     
     
-    # return new graph coords
-    pass
+    # return new graph coords, current returnng layer order is temporary
+    return current_layer_order
 
     # will the output of this sifting function be array((node, x-coords)), then the pos dict will be edited at the layer-by-layer code or
     # the graph as a whole???, but hey we are only localized in this view.
