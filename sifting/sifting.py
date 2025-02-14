@@ -8,7 +8,8 @@ from crossing_function.crossing_utils import node_neighbors
 import bisect 
 import itertools
 from sifting_utils import do_sifting
-
+from colorama import Fore
+import copy
 # Graph generation
 filepath = './10nodes/grafo155.10.json'
 graph_file = open(filepath, 'r')
@@ -88,7 +89,7 @@ print(json.dumps(pos, indent = 4))
 print('POS dict object!')
 
 # Sifting function
-def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos):
+def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos) -> dict:
     """
         Must output a reordered freelayer positional xy values
         Sifting concerns about ordering decisions.
@@ -112,10 +113,10 @@ def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos):
         
     sorted_indeg_prio_queue = [item for item, _ in sorted(indeg_prio_queue, key=lambda x: x[1], reverse=True)] # ditching the indegree values after the sorting has been done
     # print(sorted(indeg_prio_queue, key=lambda x: x[1], reverse=True))
-    # print("sorted_indeg_prio_queue", sorted_indeg_prio_queue)
+    print("sorted_indeg_prio_queue", sorted_indeg_prio_queue)
     
     # initialize current free layer order, based on how it was initialized earlier
-    # TODO: use the pos to rearrange free_layer, since free_layer only contains the nodes needed, not the order
+    # TODO: use the pos to rearrange free_layer, since original free_layer only contains the nodes needed, not the order
     current_layer_order = [] 
 
     for node in free_layer:
@@ -125,14 +126,18 @@ def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos):
     
     # now we assume that the order of current_layer_order is based on the order as stated in pos and not in the ordering seen in free_layer list
 
-    print("CURRENT LAYER, not extracted - sifting")
-    print(current_layer_order)    
     current_layer_order=[node for node, _ in current_layer_order]
-    
+    current_pos_data = copy.deepcopy(pos)
     for node in sorted_indeg_prio_queue:
-        new_layer_order = do_sifting(node, current_layer_order, fixed_layer, pos, edges)
-        current_layer_order = new_layer_order
-    
+        print(f"-----------New Run with the node to be sifted: {node} ---------")
+        print(f"This is the current layer order func-sifting: {current_layer_order}")
+        result = do_sifting(node, current_layer_order, fixed_layer, current_pos_data, edges)
+        current_layer_order = result["revised_lay_ord"]
+        current_pos_data = result["revised_pos"]
+        # TODO: make a new pos when do_isfting
+        # current_layer_order = new_layer_order]
+    print("---------------------------")
+    print(f"FINAL CURRENT LAYER ORDER {current_layer_order}")
     # X-COORD PROBLEM
     # pag sinift mo ba, pano mag-aadjust x-coords?? how will it be recomputed?
     # the crossing function only uses the positions, but let us check how this will work if only the node are given
@@ -145,9 +150,8 @@ def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos):
     
     # READJUST NEW GRAPH COORDINATES
     
-    
     # return new graph coords, current returnng layer order is temporary
-    return current_layer_order
+    return {"sifting_layer_ord": current_layer_order, "sifting_pos": current_pos_data}
 
     # will the output of this sifting function be array((node, x-coords)), then the pos dict will be edited at the layer-by-layer code or
     # the graph as a whole???, but hey we are only localized in this view.
@@ -158,8 +162,9 @@ fixed_layer_no = 1
 free_layer = layered_pos[free_layer_no]
 fixed_layer = layered_pos[fixed_layer_no]
 
-minimized_layer = sifting(free_layer, fixed_layer, edges, pos)
-
+sift_res = sifting(free_layer, fixed_layer, edges, pos)
+minimized_layer = sift_res["sifting_layer_ord"]
+new_pos = sift_res["sifting_pos"]
 print("original layer")
 print(free_layer)
 print("minimizedlayer")
@@ -168,7 +173,7 @@ print(minimized_layer)
 plt.figure(figsize=(5, 3))
 nx.draw(
     G,
-    pos=pos,
+    pos=new_pos,
     with_labels=True,
     node_size=2000,
     node_color="lightgreen",
