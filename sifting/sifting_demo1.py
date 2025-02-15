@@ -3,11 +3,18 @@ import matplotlib.pyplot as plt
 import json
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from crossing_function.crossing_func import cross_count
-from crossing_function.crossing_utils import node_neighbors
-import bisect 
-import itertools
-import copy
+from sifting import sifting
+
+# Graph generation
+# filepath = './10nodes/grafo155.10.json'
+# graph_file = open(filepath, 'r')
+
+# data = json.load(graph_file)
+
+# nodes = data["nodes"]
+
+# edges = data["edges"]
+
 nodes = [
     {"id": "u1", "depth": 1},
     {"id": "u2", "depth": 2},
@@ -61,6 +68,9 @@ for node in G.nodes():
         layered_pos[depth] = []
     layered_pos[depth].append(node)
 
+# print(layered_pos, 'LAYERED POS')
+
+# Initial placement (place the nodes in horizontal layers)
 pos = {}
 layer_height = 2  # Vertical spacing between layers
 for layer, nodes_in_layer in layered_pos.items():
@@ -70,76 +80,26 @@ for layer, nodes_in_layer in layered_pos.items():
     for i, node in enumerate(nodes_in_layer):
         pos[node] = (x_offset + i, -layer * layer_height)
 
-        
-pos_silenced = {
-    "u1": [
-        -0.5,
-        -2
-    ],
-    "u5": [
-        0.5,
-        -2
-    ],
-    "u2": [
-        -1.0,
-        -4
-    ],
-    "u3": [
-        0.0,
-        -4
-    ],
-    "u4": [
-        1.0,
-        -4
-    ],
-    "u6": [
-        -1.0,
-        0
-    ],
-    "u7": [
-        0.0,
-        0
-    ],
-    "u8": [
-        1.0,
-        0
-    ]
-}
+print(json.dumps(pos, indent = 4))
 
-pos_copy = pos
-## Not allowed, Python will only point this to the same object. 
+# note, the higher the layer number, the lower it is on the graph
+free_layer_no = 2
+fixed_layer_no = 1
+free_layer = layered_pos[free_layer_no]
+fixed_layer = layered_pos[fixed_layer_no]
 
-old = ["u2", "u3", "u4"]
-new = ["u4", "u3", "u2"]
-def adjust_pos_data(old_order: list[str], new_order: list[str], orig_pos: dict[str, list[float]]) -> dict[str, list[float]]:
-    """Danger of manipulation of the dictionary, uses deepcopy due to Py not being pass by value or pass by ref.  
-
-    Args:
-        old_order (list[str]): _description_
-        new_order (list[str]): _description_
-        orig_pos (dict[str, list[float]]): _description_
-
-    Returns:
-        dict[str, list[float]]: _description_0
-    """
-    set_coords = []
-    dict_copy = copy.deepcopy(orig_pos)
-    for node in old_order:
-        # print(node, pos[node])
-        set_coords.append(dict_copy[node])
-        
-    for node in new_order:
-    # assign it to its corresponding set coords in the pos_copy
-        dict_copy[node] = set_coords[new_order.index(node)]
-    
-    return dict_copy
-
-pos = adjust_pos_data(old, new, pos)
-
+sift_res = sifting(free_layer, fixed_layer, edges, pos, verbose=1)
+minimized_layer = sift_res["sifting_layer_ord"]
+new_pos = sift_res["sifting_pos"]
+print("original layer")
+print(free_layer)
+print("minimizedlayer")
+print(minimized_layer)
+# Draw the graph
 plt.figure(figsize=(5, 3))
 nx.draw(
     G,
-    pos=pos,
+    pos=new_pos,
     with_labels=True,
     node_size=2000,
     node_color="lightgreen",
@@ -149,5 +109,7 @@ nx.draw(
 )
 
 # Display the graph
-plt.title("Graph with Multiple Layers and No Edges in Same Layer [original]")
+plt.title("Graph with Multiple Layers and No Edges in Same Layer")
 plt.show()
+
+# graph_file.close()

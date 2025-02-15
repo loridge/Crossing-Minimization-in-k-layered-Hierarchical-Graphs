@@ -1,107 +1,35 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-import json
 import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from crossing_function.crossing_func import cross_count
-from crossing_function.crossing_utils import node_neighbors
 import bisect 
-import itertools
-from sifting_utils import do_sifting
-from colorama import Fore
 import copy
-# Graph generation
-filepath = './10nodes/grafo155.10.json'
-graph_file = open(filepath, 'r')
 
-data = json.load(graph_file)
-
-nodes = data["nodes"]
-
-edges = data["edges"]
-
-nodes = [
-    {"id": "u1", "depth": 1},
-    {"id": "u2", "depth": 2},
-    {"id": "u3", "depth": 2},
-    {"id": "u4", "depth": 2},
-    {"id": "u5", "depth": 1},
-    {"id": "u6", "depth": 0},
-    {"id": "u7", "depth": 0},
-    {"id": "u8", "depth": 0}
-]
-
-edges = [
-    {"nodes": ["u1", "u7"]},
-    {"nodes": ["u1", "u6"]},
-    {"nodes": ["u1", "u8"]},
-    {"nodes": ["u5", "u6"]},
-    {"nodes": ["u5", "u7"]},
-    {"nodes": ["u1", "u2"]},
-    {"nodes": ["u1", "u3"]},
-    {"nodes": ["u1", "u4"]},
-    {"nodes": ["u5", "u3"]},
-    {"nodes": ["u5", "u2"]}
-]
-
-# Create a graph
-G = nx.Graph()
-
-# Add nodes to the graph
-for node in nodes:
-    G.add_node(node["id"], depth=node["depth"])  # Use 'layer' as 'depth'
-    
-# Add edges to the graph, ensuring no same-layer edges
-# Also remove the edges that are same-layer
-new_edges = []
-for edge in edges:
-    node1, node2 = edge["nodes"]
-    if G.nodes[node1]["depth"] != G.nodes[node2]["depth"]:  # Check depths
-        G.add_edge(node1, node2)
-        # push the qualified edge to the new_edge array
-        new_edges.append(edge)
-    else: 
-        pass
-# Edges array should have now the qualified edges no same-layer edges
-edges = new_edges
-
-# Initialize positions for nodes grouped by depths
-layered_pos = {}
-for node in G.nodes():
-    depth = G.nodes[node]["depth"]
-    if depth not in layered_pos:
-        layered_pos[depth] = []
-    layered_pos[depth].append(node)
-
-print(layered_pos, 'LAYERED POS')
-
-# Initial placement (place the nodes in horizontal layers)
-pos = {}
-layer_height = 2  # Vertical spacing between layers
-for layer, nodes_in_layer in layered_pos.items():
-    # Sort nodes in each layer by their 'id' in increasing order
-    nodes_in_layer.sort()  # Sort alphabetically by id
-    x_offset = -(len(nodes_in_layer) - 1) / 2  # Center nodes horizontally
-    for i, node in enumerate(nodes_in_layer):
-        pos[node] = (x_offset + i, -layer * layer_height)
-
-print(json.dumps(pos, indent = 4))
-print('POS dict object!')
+from sifting_utils import do_sifting
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from crossing_function.crossing_utils import node_neighbors
 
 # Sifting function
-def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos) -> dict:
+def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos, verbose=0) -> dict:
     """
-        Must output a reordered freelayer positional xy values
-        Sifting concerns about ordering decisions.
-        
-        
-        
-        output must be new graph positioning. 
+    Perform the sifting algorithm to reorder the free layer nodes to minimize edge crossings.
+
+    This function reorders the nodes in the free layer based on their indegree and positional data
+    to minimize the number of edge crossings in the graph. The output is the new graph positioning
+    and the reordered free layer.
+
     Args:
-        free_layer (list[str]): _description_
-        fixed_layer (list[str]): _description_
-        pos: contains the x-coordinates
-    """    
+        free_layer (list[str]): List of node labels in the free layer.
+        fixed_layer (list[str]): List of node labels in the fixed layer.
+        edges (list): List of edges in the graph.
+        pos (dict): Dictionary containing the positional data of the nodes.
+                    The keys are node labels, and the values are (x, y) tuples
+                    representing the positions of the nodes.
+        verbose (int, optional): Verbosity level for debugging output. Defaults to 0.
+
+    Returns:
+        dict: A dictionary containing the new graph positioning and the reordered free layer.
+              The keys are:
+                - "sifting_layer_ord": The reordered free layer node labels.
+                - "sifting_pos": The new positional data of the nodes.
+    """   
     
     # Make a PRIORITY QUEUE for nodes in descending order of their indegrees.
     ## element format (node, indegree)    
@@ -112,10 +40,8 @@ def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos) -> 
         indeg_prio_queue.append((node, indeg_cnt))
         
     sorted_indeg_prio_queue = [item for item, _ in sorted(indeg_prio_queue, key=lambda x: x[1], reverse=True)] # ditching the indegree values after the sorting has been done
-    # print(sorted(indeg_prio_queue, key=lambda x: x[1], reverse=True))
-    print("sorted_indeg_prio_queue", sorted_indeg_prio_queue)
+    if verbose: print("sorted_indeg_prio_queue", sorted_indeg_prio_queue)
     
-    # initialize current free layer order, based on how it was initialized earlier
     # TODO: use the pos to rearrange free_layer, since original free_layer only contains the nodes needed, not the order
     current_layer_order = [] 
 
@@ -129,61 +55,21 @@ def sifting(free_layer: list[str], fixed_layer: list[str], edges: list, pos) -> 
     current_layer_order=[node for node, _ in current_layer_order]
     current_pos_data = copy.deepcopy(pos)
     for node in sorted_indeg_prio_queue:
-        print(f"-----------New Run with the node to be sifted: {node} ---------")
-        print(f"This is the current layer order func-sifting: {current_layer_order}")
-        result = do_sifting(node, current_layer_order, fixed_layer, current_pos_data, edges)
+        if verbose:
+            print(f"-----------New Run with the node to be sifted: {node} ---------")
+            print(f"This is the current layer order func-sifting: {current_layer_order}")
+        result = do_sifting(node, current_layer_order, fixed_layer, current_pos_data, edges, verbose=verbose)
         current_layer_order = result["revised_lay_ord"]
         current_pos_data = result["revised_pos"]
-        # TODO: make a new pos when do_isfting
-        # current_layer_order = new_layer_order]
-    print("---------------------------")
-    print(f"FINAL CURRENT LAYER ORDER {current_layer_order}")
+    if verbose:
+        print("---------------------------")
+        print(f"FINAL CURRENT LAYER ORDER {current_layer_order}")
     # X-COORD PROBLEM
     # pag sinift mo ba, pano mag-aadjust x-coords?? how will it be recomputed?
     # the crossing function only uses the positions, but let us check how this will work if only the node are given
     # barycenter explicity uses it, but for sifting??
-    ## does it preserve the original x-coords na parang slot machine iinsert mo doon, or magbabago x-coords
+    ## does it preserve the original x-coords na parang slots na iinsert mo doon, or magbabago x-coords
     
-    # sifting with new insertion, x-coords must be readjusted
-    # layer ordering is based on x-coords
-    ## how does sifting consider x-coordinates?
     
-    # READJUST NEW GRAPH COORDINATES
-    
-    # return new graph coords, current returnng layer order is temporary
+    # return new graph coords and the new order 
     return {"sifting_layer_ord": current_layer_order, "sifting_pos": current_pos_data}
-
-    # will the output of this sifting function be array((node, x-coords)), then the pos dict will be edited at the layer-by-layer code or
-    # the graph as a whole???, but hey we are only localized in this view.
-    
-# note, the higher the layer number, the lower it is on the graph
-free_layer_no = 2
-fixed_layer_no = 1
-free_layer = layered_pos[free_layer_no]
-fixed_layer = layered_pos[fixed_layer_no]
-
-sift_res = sifting(free_layer, fixed_layer, edges, pos)
-minimized_layer = sift_res["sifting_layer_ord"]
-new_pos = sift_res["sifting_pos"]
-print("original layer")
-print(free_layer)
-print("minimizedlayer")
-print(minimized_layer)
-# Draw the graph
-plt.figure(figsize=(5, 3))
-nx.draw(
-    G,
-    pos=new_pos,
-    with_labels=True,
-    node_size=2000,
-    node_color="lightgreen",
-    font_size=10,
-    font_weight="bold",
-    arrows=True,
-)
-
-# Display the graph
-plt.title("Graph with Multiple Layers and No Edges in Same Layer")
-plt.show()
-
-graph_file.close()
