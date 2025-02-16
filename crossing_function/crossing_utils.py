@@ -15,6 +15,8 @@ def node_neighbors(target: str, edges: list, fixed_layer_nodes: List[str]) -> li
     Returns:
         list[str]: A list of node labels that are neighbors of the target node.
     """
+    
+    # print("Inside node_neigbors:", target, edges, fixed_layer_nodes)
     neighbors = []
     for edge_data in edges:
         edge_node_arr = edge_data["nodes"]
@@ -22,10 +24,16 @@ def node_neighbors(target: str, edges: list, fixed_layer_nodes: List[str]) -> li
             other_node = edge_node_arr[1] if edge_node_arr[0] == target else edge_node_arr[0]
             if other_node in fixed_layer_nodes:                
                 neighbors.append(other_node)
+    # neighbors = [
+    #     edge_node_arr[1] if edge_node_arr[0] == target else edge_node_arr[0]
+    #     for edge_data in edges
+    #     for edge_node_arr in [edge_data["nodes"]]
+    #     if target in edge_node_arr and (edge_node_arr[1] if edge_node_arr[0] == target else edge_node_arr[0]) in fixed_layer_nodes
+    # ]
     return neighbors
 
 
-def u_prime_list_processor(target: str, pos: Dict[str, List[float]], free_layer: list) -> List[str]:
+def u_prime_list_processor(target: str, free_layer: list) -> List[str]:
     """
     Finds all the nodes that are to the left of a target node in the same layer.
     Fills u_prime_nodes.
@@ -40,27 +48,30 @@ def u_prime_list_processor(target: str, pos: Dict[str, List[float]], free_layer:
     Returns:
         List[str]: A list of node labels that are to the left of the target node in the same layer.
     """
-    target_coords = pos[target]
+    # target_coords = pos[target]
+    target_node_order = free_layer.index(target)
     u_prime_list = []
+    if not (len(free_layer) == 1 or target_node_order == 0): u_prime_list = free_layer[:target_node_order]
+
+    return u_prime_list
 
     # Trivial case where the target node is the only node in that layer is ignored
     # Case where there is nothing to the left is handled by the for loop
     # Case where there are at least 1 node to the left is handled by the for loop.
-    if len(free_layer) != 1:
-        for node in free_layer:
-            if node == target:
-                continue
-            else:
-                # if the x-coords of node is less than the x-coords of target node, push it to u_prime_list
-                # NOTE: coords are usually used for graph drawing, technically u can implement this using an ordered list
-                # we have to check pos because we know that the given layers might be unordered according to how pos orders them to.
-                ### we have no assurances, we might no longer need pos if sure na yung list is randomly ordered 
-                if pos[node][0] < target_coords[0]:
-                    u_prime_list.append(node)
+    # if len(free_layer) != 1:
+    #     for node in free_layer:
+    #         if node == target:
+    #             continue
+    #         else:
+    #             # if the x-coords of node is less than the x-coords of target node, push it to u_prime_list
+    #             # NOTE: coords are usually used for graph drawing, technically u can implement this using an ordered list
+    #             # we have to check pos because we know that the given layers might be unordered according to how pos orders them to.
+    #             ### we have no assurances, we might no longer need pos if sure na yung list is randomly ordered 
+    #             if pos[node][0] < target_coords[0]:
+    #                 u_prime_list.append(node)
+    
 
-    return u_prime_list
-
-def u_prime_neighbor_filter(target_u_prime: str, u_neighbor: str, edges: list, fixed_layer_nodes: List[str], pos) -> List[str]:
+def u_prime_neighbor_filter(target_u_prime: str, u_neighbor: str, edges: list, fixed_layer_nodes: List[str],) -> List[str]:
     """
     For a certain node u_prime, we filter its neighbors (list of v_primes that are in fixed layer) that satisfies v_prime > v.
     v in this case is the u_neighbor.
@@ -76,12 +87,22 @@ def u_prime_neighbor_filter(target_u_prime: str, u_neighbor: str, edges: list, f
     
     """ 
     u_prime_neighbors = node_neighbors(target_u_prime, edges, fixed_layer_nodes)
-    filtered_u_prime_neighbors = []
-    for v_prime in u_prime_neighbors:
-        v_prime_coords = pos[v_prime]
-        u_neighbor_coords = pos[u_neighbor]
-        
-        if v_prime_coords[0] > u_neighbor_coords[0]:
-            filtered_u_prime_neighbors.append(v_prime)
+    u_neighbor_index = fixed_layer_nodes.index(u_neighbor)
+    return [
+        v_prime for v_prime in u_prime_neighbors
+        if fixed_layer_nodes.index(v_prime) > u_neighbor_index
+    ]
+    # filtered_u_prime_neighbors = []
+    # for v_prime in u_prime_neighbors:
+    #     # v_prime_coords = pos[v_prime]
+    #     # u_neighbor_coords = pos[u_neighbor]
+    #     v_prime_coords = fixed_layer_nodes.index(v_prime)
+    #     u_neighbor_coords = fixed_layer_nodes.index(u_neighbor)
+    #     # if v_prime_coords[0] > u_neighbor_coords[0]:
+    #     #     filtered_u_prime_neighbors.append(v_prime)
+    #     if v_prime_coords > u_neighbor_coords: filtered_u_prime_neighbors.append(v_prime)
     
-    return filtered_u_prime_neighbors
+    # return filtered_u_prime_neighbors
+    
+    ### new implementation
+    

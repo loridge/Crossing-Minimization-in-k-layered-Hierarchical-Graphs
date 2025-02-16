@@ -1,20 +1,13 @@
+from copy import deepcopy
 import networkx as nx
 import matplotlib.pyplot as plt
 import json
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from sifting import sifting
+from sifting_2 import sifting
+from sifting_util2 import update_positions
 
 # Graph generation
-# filepath = './10nodes/grafo155.10.json'
-# graph_file = open(filepath, 'r')
-
-# data = json.load(graph_file)
-
-# nodes = data["nodes"]
-
-# edges = data["edges"]
-
 nodes = [
     {"id": "u1", "depth": 1},
     {"id": "u2", "depth": 2},
@@ -47,17 +40,12 @@ for node in nodes:
     G.add_node(node["id"], depth=node["depth"])  # Use 'layer' as 'depth'
     
 # Add edges to the graph, ensuring no same-layer edges
-# Also remove the edges that are same-layer
 new_edges = []
 for edge in edges:
     node1, node2 = edge["nodes"]
     if G.nodes[node1]["depth"] != G.nodes[node2]["depth"]:  # Check depths
         G.add_edge(node1, node2)
-        # push the qualified edge to the new_edge array
         new_edges.append(edge)
-    else: 
-        pass
-# Edges array should have now the qualified edges no same-layer edges
 edges = new_edges
 
 # Initialize positions for nodes grouped by depths
@@ -67,8 +55,6 @@ for node in G.nodes():
     if depth not in layered_pos:
         layered_pos[depth] = []
     layered_pos[depth].append(node)
-
-# print(layered_pos, 'LAYERED POS')
 
 # Initial placement (place the nodes in horizontal layers)
 pos = {}
@@ -80,26 +66,48 @@ for layer, nodes_in_layer in layered_pos.items():
     for i, node in enumerate(nodes_in_layer):
         pos[node] = (x_offset + i, -layer * layer_height)
 
-print(json.dumps(pos, indent = 4))
+print("Initial positions:")
+print(json.dumps(pos, indent=1))
 
-# note, the higher the layer number, the lower it is on the graph
+# Note, the higher the layer number, the lower it is on the graph
 free_layer_no = 2
 fixed_layer_no = 1
 free_layer = layered_pos[free_layer_no]
 fixed_layer = layered_pos[fixed_layer_no]
 
-sift_res = sifting(free_layer, fixed_layer, edges, pos, verbose=1)
-minimized_layer = sift_res["sifting_layer_ord"]
-new_pos = sift_res["sifting_pos"]
-print("original layer")
+sift_res = sifting(free_layer, fixed_layer, edges, verbose=1)
+minimized_layer = sift_res
+
+# Adjust positions based on the minimized layer order
+updated_pos = update_positions(free_layer, minimized_layer, pos)
+
+print("Original layer:")
 print(free_layer)
-print("minimizedlayer")
+print("Minimized layer:")
 print(minimized_layer)
-# Draw the graph
-plt.figure(figsize=(5, 3))
+print("Updated positions:")
+print(json.dumps(updated_pos, indent=1))
+
+# Draw the graph before updating positions
+plt.figure(figsize=(10, 5))
+plt.subplot(1, 2, 1)
 nx.draw(
     G,
-    pos=new_pos,
+    pos=pos,
+    with_labels=True,
+    node_size=2000,
+    node_color="lightblue",
+    font_size=10,
+    font_weight="bold",
+    arrows=True,
+)
+plt.title("Graph Before Sifting")
+
+# Draw the graph after updating positions
+plt.subplot(1, 2, 2)
+nx.draw(
+    G,
+    pos=updated_pos,
     with_labels=True,
     node_size=2000,
     node_color="lightgreen",
@@ -107,9 +115,7 @@ nx.draw(
     font_weight="bold",
     arrows=True,
 )
+plt.title("Graph After Sifting")
 
-# Display the graph
-plt.title("Graph with Multiple Layers and No Edges in Same Layer")
+# Display the graphs
 plt.show()
-
-# graph_file.close()

@@ -2,7 +2,7 @@ import sys, os
 import bisect 
 import copy
 
-from sifting_utils import do_sifting
+from sifting.archive.sifting_utils import do_sifting
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from crossing_function.crossing_utils import node_neighbors
 

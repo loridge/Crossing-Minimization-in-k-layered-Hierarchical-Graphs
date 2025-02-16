@@ -1,25 +1,43 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import json
-
-import sys
-import os
-# Add the parent directory to the Python path
+import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from crossing_function.crossing_func import cross_count
-
-
+from sifting.archive import sifting
 
 # Graph generation
-filepath = './10nodes/grafo1972.10.json'
-graph_file = open(filepath, 'r')
-data = json.load(graph_file)
+# filepath = './10nodes/grafo155.10.json'
+# graph_file = open(filepath, 'r')
 
-nodes = data["nodes"]
+# data = json.load(graph_file)
 
-edges = data["edges"]
+# nodes = data["nodes"]
 
+# edges = data["edges"]
+
+nodes = [
+    {"id": "u1", "depth": 1},
+    {"id": "u2", "depth": 2},
+    {"id": "u3", "depth": 2},
+    {"id": "u4", "depth": 2},
+    {"id": "u5", "depth": 1},
+    {"id": "u6", "depth": 0},
+    {"id": "u7", "depth": 0},
+    {"id": "u8", "depth": 0}
+]
+
+edges = [
+    {"nodes": ["u1", "u7"]},
+    {"nodes": ["u1", "u6"]},
+    {"nodes": ["u1", "u8"]},
+    {"nodes": ["u5", "u6"]},
+    {"nodes": ["u5", "u7"]},
+    {"nodes": ["u1", "u2"]},
+    {"nodes": ["u1", "u3"]},
+    {"nodes": ["u1", "u4"]},
+    {"nodes": ["u5", "u3"]},
+    {"nodes": ["u5", "u2"]}
+]
 
 # Create a graph
 G = nx.Graph()
@@ -50,7 +68,8 @@ for node in G.nodes():
         layered_pos[depth] = []
     layered_pos[depth].append(node)
 
-print(layered_pos, 'LAYERED POS')
+# print(layered_pos, 'LAYERED POS')
+
 # Initial placement (place the nodes in horizontal layers)
 pos = {}
 layer_height = 2  # Vertical spacing between layers
@@ -62,25 +81,26 @@ for layer, nodes_in_layer in layered_pos.items():
         pos[node] = (x_offset + i, -layer * layer_height)
 
 print(json.dumps(pos, indent = 4))
-print('POS dict object, DEBUGGING')
 
-## TODO:  a check whether 2 provided layers are +1 of each other, for the layer by layer function
-
-## NOTE: 0 is the highest layer numbering; and the greater its absolute value, the lower it is placed in the graph
+########################### Testing zone##########################
+# note, the higher the layer number, the lower it is on the graph
 free_layer_no = 2
 fixed_layer_no = 1
 free_layer = layered_pos[free_layer_no]
 fixed_layer = layered_pos[fixed_layer_no]
 
-print('Layer no: ', free_layer_no, free_layer, 'free_layer')
-print('Layer no: ', fixed_layer_no,fixed_layer, 'fixed_layer')
-print('Total Layer Crossing Count: ', cross_count(fixed_layer, free_layer, pos, edges, layered_pos))    
-
+sift_res = sifting(free_layer, fixed_layer, edges, pos, verbose=1)
+minimized_layer = sift_res["sifting_layer_ord"]
+new_pos = sift_res["sifting_pos"]
+print("original layer")
+print(free_layer)
+print("minimizedlayer")
+print(minimized_layer)
 # Draw the graph
-plt.figure(figsize=(9, 6))
+plt.figure(figsize=(5, 3))
 nx.draw(
     G,
-    pos=pos,
+    pos=new_pos,
     with_labels=True,
     node_size=2000,
     node_color="lightgreen",
@@ -93,6 +113,4 @@ nx.draw(
 plt.title("Graph with Multiple Layers and No Edges in Same Layer")
 plt.show()
 
-graph_file.close()
-
-# python ./cross_func_sample/cross_sample2.py on the repo directory
+# graph_file.close()
