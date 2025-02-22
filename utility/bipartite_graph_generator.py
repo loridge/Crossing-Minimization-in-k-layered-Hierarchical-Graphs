@@ -89,7 +89,7 @@ import random
 def forced_density_gen_bip_graph(n1, n2, density):
     """
     Generate a bipartite graph with a fixed edge density.
-
+    
     Args:
         n1 (int): Number of nodes in the first layer.
         n2 (int): Number of nodes in the second layer.
