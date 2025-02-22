@@ -1,7 +1,7 @@
 from crossing_function.crossing_utils import node_neighbors, u_prime_neighbor_filter, u_prime_list_processor
 
 # Crossing function or Objective Function
-def cross_count(fixed_layer: list[str], free_layer: list[str], edges: list, layered_pos_data=None) -> int:
+def cross_count(fixed_layer: list[str], free_layer: list[str], edges: list, ) -> int:
     """
     Calculate the number of edge crossings between two layers in a bipartite graph.
 
@@ -16,8 +16,6 @@ def cross_count(fixed_layer: list[str], free_layer: list[str], edges: list, laye
                          The keys are node labels, and the values are (x, y) tuples
                          representing the positions of the nodes.
         edges (list): List of edges in the graph.
-        layered_pos_data (dict, optional): Dictionary containing the layered positional data of the nodes.
-                                           Defaults to None.
 
     Returns:
         int: The total number of edge crossings between the two layers.
@@ -25,7 +23,8 @@ def cross_count(fixed_layer: list[str], free_layer: list[str], edges: list, laye
     # Reference: https://studenttheses.uu.nl/bitstream/handle/20.500.12932/46720/final_Bachelor_Thesis_Mathematics.pdf?sequence=1&isAllowed=y
     crossing_total = 0
     
-    
+    fixed_layer = [f"u{node}" if len(str(node)) == 1 else node for node in list(fixed_layer) ]
+    free_layer =  [f"u{node}" if len(str(node)) == 1 else node for node in list(free_layer) ]
     
     for u_node in free_layer:
         neighbor_u_node = []

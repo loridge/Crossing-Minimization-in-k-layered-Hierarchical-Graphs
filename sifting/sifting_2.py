@@ -66,7 +66,7 @@ def sifting_2(free_layer: list[str], fixed_layer: list[str], edges: list, verbos
     return current_layer_order
 
 
-def sifting(free_layer: Union[Set[str], List[str]], fixed_layer: Union[Set[str], List[str]], edges: list, verbose=0, generated=0) -> list:
+def sifting(free_layer: Union[Set[str], List[str]], fixed_layer: Union[Set[str], List[str]], edges: list, verbose=0,) -> list:
     """
     Perform the sifting algorithm to reorder the free layer nodes to minimize edge crossings.
 
@@ -82,15 +82,11 @@ def sifting(free_layer: Union[Set[str], List[str]], fixed_layer: Union[Set[str],
     """
     # wrapper para compatible haha 
     
-    if generated:
-        free_layer = list(free_layer)
-        fixed_layer = list(fixed_layer)
-        free_layer = [f"u{num}" for num in free_layer]
-        fixed_layer = [f"u{num}" for num in fixed_layer]     
+    fixed_layer = [f"u{node}" if len(str(node)) == 1 else node for node in list(fixed_layer) ]
+    free_layer =  [f"u{node}" if len(str(node)) == 1 else node for node in list(free_layer) ]   
     
     reordered_layer = sifting_2(free_layer, fixed_layer, edges, verbose)
     
-    if generated:
-        reordered_layer = [int(node[1:]) for node in reordered_layer]
-        
+    reordered_layer = [int(node[1:]) if len(str(node)) == 2 else node for node in reordered_layer]
+    
     return reordered_layer
