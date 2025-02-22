@@ -3,10 +3,9 @@ from typing import Union, List, Set
 # import bisect 
 # import copy
 
-from sifting_util2 import do_sifting
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from crossing_function.crossing_utils import node_neighbors
-
+from sifting.crossing_function.crossing_utils import node_neighbors
+from .sifting_util2 import do_sifting
+print(os.getcwd())
 # Sifting function
 def sifting_2(free_layer: list[str], fixed_layer: list[str], edges: list, verbose=0,) -> list:
     """
@@ -82,11 +81,16 @@ def sifting(free_layer: Union[Set[str], List[str]], fixed_layer: Union[Set[str],
     """
     # wrapper para compatible haha 
     
-    fixed_layer = [f"u{node}" if len(str(node)) == 1 else node for node in list(fixed_layer) ]
-    free_layer =  [f"u{node}" if len(str(node)) == 1 else node for node in list(free_layer) ]   
+    fixed_layer = [f"u{node}" if isinstance(node, int) else node for node in list(fixed_layer) ]
+    free_layer =  [f"u{node}" if isinstance(node, int) else node for node in list(free_layer) ]   
     
     reordered_layer = sifting_2(free_layer, fixed_layer, edges, verbose)
     
-    reordered_layer = [int(node[1:]) if len(str(node)) == 2 else node for node in reordered_layer]
-    
+    try: 
+        reordered_layer = [int(node[1:]) if isinstance(node, str) and node.startswith('u') and node[1:].isdigit() else node for node in reordered_layer]    
+    except:
+        print("ERROR: fixed layer =>", fixed_layer)
+        print("ERROR: free layer =>", free_layer)
+        
+        print("ERROR: Reordered layer =>", reordered_layer)
     return reordered_layer

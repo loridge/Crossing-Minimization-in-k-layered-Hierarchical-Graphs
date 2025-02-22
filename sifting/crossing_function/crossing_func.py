@@ -1,4 +1,4 @@
-from crossing_function.crossing_utils import node_neighbors, u_prime_neighbor_filter, u_prime_list_processor
+from .crossing_utils import node_neighbors, u_prime_neighbor_filter, u_prime_list_processor
 
 # Crossing function or Objective Function
 def cross_count(fixed_layer: list[str], free_layer: list[str], edges: list, ) -> int:
@@ -23,8 +23,8 @@ def cross_count(fixed_layer: list[str], free_layer: list[str], edges: list, ) ->
     # Reference: https://studenttheses.uu.nl/bitstream/handle/20.500.12932/46720/final_Bachelor_Thesis_Mathematics.pdf?sequence=1&isAllowed=y
     crossing_total = 0
     
-    fixed_layer = [f"u{node}" if len(str(node)) == 1 else node for node in list(fixed_layer) ]
-    free_layer =  [f"u{node}" if len(str(node)) == 1 else node for node in list(free_layer) ]
+    fixed_layer = [f"u{node}" if isinstance(node, int) else node for node in list(fixed_layer) ]
+    free_layer =  [f"u{node}" if isinstance(node, int) else node for node in list(free_layer) ]
     
     for u_node in free_layer:
         neighbor_u_node = []

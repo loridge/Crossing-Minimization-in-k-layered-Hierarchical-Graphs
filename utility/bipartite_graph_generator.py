@@ -30,8 +30,12 @@ def count_crossings(B, pos):
     # Iterate over all pairs of edges
     for (u1, v1), (u2, v2) in combinations(edges, 2):
         # Get positions of the edges' endpoints
-        x1, x2 = pos[u1][0], pos[v1][0]
-        x3, x4 = pos[u2][0], pos[v2][0]
+        try: 
+            x1, x2 = pos[u1][0], pos[v1][0]
+            x3, x4 = pos[u2][0], pos[v2][0]
+        except:
+            print("ERROR: Leley count crossings")
+            print(pos)
         # Check if the edges cross (intersection in x-coordinates)
         if (x1 < x3 and x2 > x4) or (x1 > x3 and x2 < x4):
             crossings += 1
@@ -52,10 +56,10 @@ def generate_bipartite_graph(n1, n2, p):
             - nodes is a list of dictionaries with "id" and "layer".
             - edges is a list of dictionaries with "nodes" as a pair of connected node IDs.
     """
+    print("generating", end="")
     while True:
         # Create a random bipartite graph
         B = nx.bipartite.random_graph(n1, n2, p)
-        print("generating")
         
         # Check if the graph is connected
         if nx.is_connected(B):

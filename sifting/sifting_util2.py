@@ -7,8 +7,7 @@ import matplotlib.pyplot as plt
 import json
 ###
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from crossing_function.crossing_func import cross_count
+from .crossing_function import cross_count
 
 # Update positions based on the minimized layer order
 

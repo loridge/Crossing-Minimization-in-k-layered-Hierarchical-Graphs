@@ -5,13 +5,19 @@ The module generates bipartite graphs with specified parameters, applies differe
 and calculates the number of edge crossings for each heuristic. The results are stored in a DataFrame and saved to a CSV file.
 """
 
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+import sys
+import os
 
-from utils.bipartite_graph_generator import generate_bipartite_graph, visualize_bipartite_graph, count_crossings, update_positions, plot_results
+# # Get the parent directory
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# Add the parent directory to sys.path
+sys.path.insert(0, parent_dir)
+
+from utility.bipartite_graph_generator import generate_bipartite_graph, visualize_bipartite_graph, count_crossings, update_positions, plot_results
 from bary_med.two_layer_barycenter import barycenter, parse_edges, median, draw_horizontal_bipartite
-from edgedensity import generator_bip_graph
+# from edgedensity import generator_bip_graph
 from sifting.sifting_2 import sifting
+from sifting.crossing_function.crossing_func import cross_count
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -64,7 +70,7 @@ for n1 in n1_values:
 
             # Update positions: top nodes fixed, bottom nodes reordered
             pos_median = update_positions(top_nodes, bottom_nodes_median)
-            # print("POS_MEDIAN", pos_median) #LELEY nilagay ko to
+            # print("POS_MEDIAN", pos_median) 
             crossings_median = count_crossings(B, pos_median)
 
             #visualize_bipartite_graph(B, bottom_nodes_median)
@@ -73,13 +79,12 @@ for n1 in n1_values:
             sifting_heuristic = sifting(bottom_nodes, top_nodes, edges, verbose=0, )
 
             # draw_horizontal_bipartite(B, top_nodes, sifting_heuristic, "After Sift Algorithm") ## bug spotted, i also commented a code out in sifting
-            #LELEY inedit ko draw_horiz_bipartite, sifting ---> sifting_heuristics
             pos_sifting = update_positions(top_nodes, sifting_heuristic) # the sifting_heuristic is 1,2,3,4,5 while the previous ones have 'u1, u2,..' 
-            # leley ninote ko lang yung pagdebug ko
             
             # print("POS_SIFTING", pos_sifting)
             
-            crossings_sifting = count_crossings(B, pos_sifting)
+            # crossings_sifting = count_crossings(B, pos_sifting)
+            crossings_sifting = cross_count(top_nodes, sifting_heuristic ,edges)
             
             # Store results
             results.append({
