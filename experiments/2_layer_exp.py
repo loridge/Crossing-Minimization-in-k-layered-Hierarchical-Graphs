@@ -83,8 +83,8 @@ for n1 in n1_values:
             
             # print("POS_SIFTING", pos_sifting)
             
-            # crossings_sifting = count_crossings(B, pos_sifting)
-            crossings_sifting = cross_count(top_nodes, sifting_heuristic ,edges)
+            crossings_sifting = count_crossings(B, pos_sifting)
+            # crossings_sifting = cross_count(top_nodes, sifting_heuristic,edges)
             
             # Store results
             results.append({
