@@ -34,8 +34,8 @@ def count_crossings(B, pos):
             x1, x2 = pos[u1][0], pos[v1][0]
             x3, x4 = pos[u2][0], pos[v2][0]
         except:
-            print("ERROR: Leley count crossings")
-            print(pos)
+            # print("DEBUG (count_crossings), edges and pos", edges, pos)
+            pass
         # Check if the edges cross (intersection in x-coordinates)
         if (x1 < x3 and x2 > x4) or (x1 > x3 and x2 < x4):
             crossings += 1
@@ -89,7 +89,7 @@ import random
 def forced_density_gen_bip_graph(n1, n2, density):
     """
     Generate a bipartite graph with a fixed edge density.
-    
+
     Args:
         n1 (int): Number of nodes in the first layer.
         n2 (int): Number of nodes in the second layer.

@@ -23,6 +23,7 @@ def parse_edges(edges, top_nodes, bottom_nodes):
             parsed_edges.append((u_id, v_id))
         elif v_id in top_nodes and u_id in bottom_nodes:
             parsed_edges.append((v_id, u_id))
+    # print("DEBUG: parsed_edges internal", parsed_edges, "vs", edges, "nodes",top_nodes, bottom_nodes)
     return parsed_edges
 
 # Barycenter Heuristic Implementation

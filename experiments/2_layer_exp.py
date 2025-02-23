@@ -63,6 +63,7 @@ for n1 in n1_values:
 
             # Update positions: top nodes fixed, bottom nodes reordered
             pos_barycenter = update_positions(top_nodes, bottom_nodes_bary)
+            print("DEBUG: pos_barycenter =>", B, pos_barycenter)
             crossings_barycenter = count_crossings(B, pos_barycenter)
             
             # Apply Median heuristic to reorder bottom nodes

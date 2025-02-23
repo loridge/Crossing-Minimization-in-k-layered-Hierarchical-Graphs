@@ -4,8 +4,8 @@ from typing import Union, List, Set
 # import copy
 
 from sifting.crossing_function.crossing_utils import node_neighbors
+from .crossing_function import cross_count
 from .sifting_util2 import do_sifting
-print(os.getcwd())
 # Sifting function
 def sifting_2(free_layer: list[str], fixed_layer: list[str], edges: list, verbose=0,) -> list:
     """
@@ -65,7 +65,7 @@ def sifting_2(free_layer: list[str], fixed_layer: list[str], edges: list, verbos
     return current_layer_order
 
 
-def sifting(free_layer: Union[Set[str], List[str]], fixed_layer: Union[Set[str], List[str]], edges: list, verbose=0,) -> list:
+def sifting_inactivated(free_layer: Union[Set[str], List[str]], fixed_layer: Union[Set[str], List[str]], edges: list, verbose=0,) -> list:
     """
     Perform the sifting algorithm to reorder the free layer nodes to minimize edge crossings.
 
@@ -94,3 +94,54 @@ def sifting(free_layer: Union[Set[str], List[str]], fixed_layer: Union[Set[str],
         
         print("ERROR: Reordered layer =>", reordered_layer)
     return reordered_layer
+
+
+def sifting(bottom_nodes, top_nodes, edges, verbose=0):
+    """
+    Reorders bottom nodes using the sifting heuristic based on indegree in decreasing order.
+    
+    Parameters:
+    - bottom_nodes: List of bottom-layer nodes.
+    - top_nodes: List of top-layer nodes.
+    - edges: List of dictionaries representing edges with format {'nodes': ['uX', 'uY']}.
+    
+    Returns:
+    - Reordered list of bottom-layer nodes as integers.
+    """
+    
+    top_nodes = [f"u{node}" if isinstance(node, int) else node for node in list(top_nodes) ]
+    bottom_nodes = [f"u{node}" if isinstance(node, int) else node for node in list(bottom_nodes) ]  
+    
+    # Compute indegree for each bottom node
+    indegree = {node: 0 for node in bottom_nodes}
+    for edge in edges:
+        _, b = edge['nodes']
+        indegree[b] += 1
+    
+    # Sort bottom nodes by indegree in decreasing order (priority queue for processing order)
+    sorted_nodes = sorted(bottom_nodes, key=lambda node: -indegree[node])
+    
+    # Apply the sifting heuristic
+    for node in sorted_nodes:
+        best_position = bottom_nodes.index(node)
+        best_crossings = cross_count(top_nodes, bottom_nodes, edges)
+        
+        for j in range(len(bottom_nodes)):
+            if bottom_nodes[j] == node:
+                continue
+            
+            # Swap node to new position
+            bottom_nodes.remove(node)
+            bottom_nodes.insert(j, node)
+            current_crossings = cross_count(top_nodes, bottom_nodes, edges)
+            
+            if current_crossings < best_crossings:
+                best_position = j
+                best_crossings = current_crossings
+            
+            # Revert swap
+            bottom_nodes.remove(node)
+            bottom_nodes.insert(best_position, node)
+    
+    # Extract integer values from node labels
+    return [int(node[1:]) if isinstance(node, str) and node.startswith('u') and node[1:].isdigit() else node for node in bottom_nodes]
