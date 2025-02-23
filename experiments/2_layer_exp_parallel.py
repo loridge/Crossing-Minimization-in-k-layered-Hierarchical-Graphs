@@ -95,8 +95,8 @@ def run_experiment(n1, n2, p):
     # Apply Simple Sifting heuristic to reorder bottom nodes
     sifting_heuristic = sifting(bottom_nodes, top_nodes, edges, verbose=0,)
     pos_sifting = update_positions(top_nodes, sifting_heuristic)
-    crossings_sifting = count_crossings(B, pos_sifting)
-    # crossings_sifting = cross_count(top_nodes, sifting_heuristic ,edges)
+    # crossings_sifting = count_crossings(B, pos_sifting)
+    crossings_sifting = cross_count(top_nodes, sifting_heuristic ,edges)
     
     sifting_inact = sifting_inactivated(bottom_nodes, top_nodes, edges, verbose=0,)
     pos_inact_sifting = update_positions(top_nodes, sifting_inact)
@@ -147,9 +147,9 @@ if __name__ == '__main__':
     print(df)
 
     # Save the dataframe to a CSV file
-    df.to_csv('experiment_results.csv', index=False)
+    df.to_csv('experiment_results_parallel.csv', index=False)
 
-    print("Results saved to 'experiment_results.csv'.")
+    print("Results saved to 'experiment_results_parallel.csv'.")
 
     # Call the plot function after results are stored
     plot_results(df)        
