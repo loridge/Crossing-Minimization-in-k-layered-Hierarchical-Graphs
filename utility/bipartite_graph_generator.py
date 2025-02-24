@@ -28,6 +28,10 @@ def count_crossings(B, pos):
     crossings = 0
     edges = list(B.edges())
     # Iterate over all pairs of edges
+    # print("DEBUG count_crossings function, length of edges:", len(edges))
+    # print("Type of Graph:", B)
+    # print("These are its combinations:", len(list(combinations(edges, 2))))
+    # print("\n")
     for (u1, v1), (u2, v2) in combinations(edges, 2):
         # Get positions of the edges' endpoints
         try: 
@@ -56,7 +60,7 @@ def generate_bipartite_graph(n1, n2, p):
             - nodes is a list of dictionaries with "id" and "layer".
             - edges is a list of dictionaries with "nodes" as a pair of connected node IDs.
     """
-    print("generating", end="")
+    # print("generating", end="")
     while True:
         # Create a random bipartite graph
         B = nx.bipartite.random_graph(n1, n2, p)

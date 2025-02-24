@@ -26,10 +26,12 @@ def cross_count(fixed_layer: list[str], free_layer: list[str], edges: list, ) ->
     fixed_layer = [f"u{node}" if isinstance(node, int) else node for node in list(fixed_layer) ]
     free_layer =  [f"u{node}" if isinstance(node, int) else node for node in list(free_layer) ]
     
+    total_neighbors = 0
     for u_node in free_layer:
         neighbor_u_node = []
         # TODO: implement filling of neighbor_u_node
         neighbor_u_node = node_neighbors(u_node, edges, fixed_layer)
+        total_neighbors += len(neighbor_u_node)
         # print("neighbor u  node", neighbor_u_node)
         for v_node in neighbor_u_node:
             u_prime_nodes = []
@@ -40,5 +42,7 @@ def cross_count(fixed_layer: list[str], free_layer: list[str], edges: list, ) ->
                 result = []                
                 result = u_prime_neighbor_filter(u_prime, v_node, edges, fixed_layer)
                 crossing_total += len(result)
-                
+    # print("DEBUG cross_count function, length of edges:", len(edges))
+    # print("The total encountered neighbors is:", total_neighbors)
+    # print("\n")
     return crossing_total

@@ -9,10 +9,12 @@ import time
 from itertools import permutations
 import random
 
-# # Get the parent directory
+# Add the parent directory to sys.path to enable package imports
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-# Add the parent directory to sys.path
-sys.path.insert(0, parent_dir)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
+from bary_med.two_layer_barycenter import barycenter, parse_edges, median
 from utility.bipartite_graph_generator import (
     count_crossings,
     update_positions,
@@ -20,7 +22,6 @@ from utility.bipartite_graph_generator import (
     generate_bipartite_graph,
     visualize_bipartite_graph
 )
-from bary_med.two_layer_barycenter import barycenter, parse_edges, median
 from sifting.sifting_2 import sifting
 from sifting.crossing_function.crossing_func import cross_count
 
