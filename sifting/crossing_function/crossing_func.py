@@ -42,7 +42,5 @@ def cross_count(fixed_layer: list[str], free_layer: list[str], edges: list, ) ->
                 result = []                
                 result = u_prime_neighbor_filter(u_prime, v_node, edges, fixed_layer)
                 crossing_total += len(result)
-    # print("DEBUG cross_count function, length of edges:", len(edges))
-    # print("The total encountered neighbors is:", total_neighbors)
-    # print("\n")
+
     return crossing_total

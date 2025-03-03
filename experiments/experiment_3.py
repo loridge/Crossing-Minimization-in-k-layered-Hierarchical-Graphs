@@ -23,11 +23,13 @@ from utility.bipartite_graph_generator import (
     visualize_bipartite_graph
 )
 from sifting.sifting_2 import sifting
+from branch_bound import branch_and_bound_oscm
+
 from sifting.crossing_function.crossing_func import cross_count
 
 # Parameters for experimentation
-vertex_counts = [5,10,20,30,40,50,60,70,80,90,100]  # Example vertex counts for testing
-num_samples = 10  # Number of samples per vertex count
+vertex_counts = [10,20,30,40,50,60,]  # Example vertex counts for testing
+num_samples = 1  # Number of samples per vertex count
 
 def generate_sparse_bipartite_graph(n1, n2):
     """
@@ -155,12 +157,15 @@ def run_experiment(n1, n2):
 
         print("DEBUG-executing brute force method.")
         # _, crossings_optimal = minimize_crossings(list(top_nodes), list(bottom_nodes), edges)
-
+        bottom_nodes_bb = branch_and_bound_oscm(top_nodes, bottom_nodes, edges, verbose=1)
+        crossings_optimal = cross_count(top_nodes, bottom_nodes_bb, edges)
+        
+        
         results["avg_crossings_original"] += crossings_original
         results["avg_crossings_barycenter"] += crossings_barycenter
         results["avg_crossings_median"] += crossings_median
         results["avg_crossings_sifting"] += crossings_sifting
-        # results["avg_crossings_optimal"] += crossings_optimal
+        results["avg_crossings_optimal"] += crossings_optimal
 
     # Compute averages
     results["density"] = total_density / num_samples
@@ -168,7 +173,7 @@ def run_experiment(n1, n2):
     results["avg_crossings_barycenter"] /= num_samples
     results["avg_crossings_median"] /= num_samples
     results["avg_crossings_sifting"] /= num_samples
-    # results["avg_crossings_optimal"] /= num_samples
+    results["avg_crossings_optimal"] /= num_samples
 
     return results  # Ensure this line is present!
  
@@ -203,7 +208,7 @@ if __name__ == '__main__':
     plt.plot(df["n1"], df["avg_crossings_barycenter"], label="Barycenter")
     plt.plot(df["n1"], df["avg_crossings_median"], label="Median")
     plt.plot(df["n1"], df["avg_crossings_sifting"], label="Sifting")
-    # plt.plot(df["n1"], df["avg_crossings_optimal"], label="Optimal (Brute-force)")
+    plt.plot(df["n1"], df["avg_crossings_optimal"], label="Optimal (Brute-force)")
 
     plt.xlabel("Number of Vertices (|V1| = |V2|)")
     plt.ylabel("Average Number of Crossings")
