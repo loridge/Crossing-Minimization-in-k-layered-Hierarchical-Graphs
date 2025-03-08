@@ -99,7 +99,7 @@ def minimize_crossings(fixed_layer, free_layer, edges):
     """
     min_crossings = float('inf')
     optimal_ordering = None
-
+    print("Currently has", len(fixed_layer), "vertices",  edges)
     for perm in permutations(free_layer):
         current_crossings = cross_count(fixed_layer, list(perm), edges)
         if current_crossings < min_crossings:
@@ -172,6 +172,6 @@ def run_experiment(n1, n2, num_samples):
     results["avg_crossings_barycenter"] /= num_samples
     results["avg_crossings_median"] /= num_samples
     results["avg_crossings_sifting"] /= num_samples
-    # results["avg_crossings_optimal"] /= num_samples
+    results["avg_crossings_optimal"] /= num_samples
 
     return results  # Ensure this line is present!
