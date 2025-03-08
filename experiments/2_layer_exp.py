@@ -25,9 +25,9 @@ from networkx.algorithms import bipartite
 import time
 
 # Parameters for experimentation
-n1_values = [10] # Top-layer node counts
-n2_values = [10]  # Bottom-layer node counts
-p_values = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6,0.7,0.8]  # Edge probabilities
+n1_values = [30] # Top-layer node counts
+n2_values = [30]  # Bottom-layer node counts
+p_values = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]  # Edge probabilities
 # p_values = [0.1]
 # Results list to store experiment outcomes
 results = []
@@ -44,8 +44,8 @@ for n1 in n1_values:
             # nodes, edges, B, top_nodes, bottom_nodes = generator_bip_graph(n1, n2, p)
 
             # Calculate density, not yet bipartite
-            # density = nx.density(B)
-            density = bipartite.density(B, set(top_nodes))
+            density = nx.density(B)
+            # density = bipartite.density(B, set(top_nodes))
             # Visualize the graph (optional, for small graphs)
             #visualize_bipartite_graph(B, bottom_nodes)
             
