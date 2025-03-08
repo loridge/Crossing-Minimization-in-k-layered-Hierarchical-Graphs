@@ -112,7 +112,7 @@ print(df)
 # Save the dataframe to a CSV file
 df.to_csv('experiment_results.csv', index=False)
 
-print("Results saved to 'experiment_results.csv'.")
+print("Results saved to '2_exp_results.csv'.")
 
 # Call the plot function after results are stored
 plot_results(df)
