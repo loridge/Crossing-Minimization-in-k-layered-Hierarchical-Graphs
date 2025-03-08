@@ -108,7 +108,7 @@ def minimize_crossings(fixed_layer, free_layer, edges):
 
     return list(optimal_ordering), min_crossings
 
-def run_experiment(n1, n2):
+def run_experiment(n1, n2, num_samples):
     """
     Run experiments for a given pair of vertex counts.
 
@@ -155,7 +155,7 @@ def run_experiment(n1, n2):
         crossings_sifting = count_crossings(B, pos_sifting)
 
         # print("DEBUG-executing brute force method.")
-        # _, crossings_optimal = minimize_crossings(list(top_nodes), list(bottom_nodes), edges)
+        bottom_nodes_optimal, crossings_optimal = minimize_crossings(list(top_nodes), list(bottom_nodes), edges)
         # bottom_nodes_bb = branch_and_bound_oscm(top_nodes, bottom_nodes, edges, verbose=1)
         # crossings_optimal = cross_count(top_nodes, bottom_nodes_bb, edges)
         
@@ -164,7 +164,7 @@ def run_experiment(n1, n2):
         results["avg_crossings_barycenter"] += crossings_barycenter
         results["avg_crossings_median"] += crossings_median
         results["avg_crossings_sifting"] += crossings_sifting
-        # results["avg_crossings_optimal"] += crossings_optimal
+        results["avg_crossings_optimal"] += crossings_optimal
 
     # Compute averages
     results["density"] = total_density / num_samples
