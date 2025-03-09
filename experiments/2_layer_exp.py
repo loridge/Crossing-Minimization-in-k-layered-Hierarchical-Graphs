@@ -25,7 +25,7 @@ from networkx.algorithms import bipartite
 import time
 
 # Parameters for experimentation
-n1_values = [30] # Top-layer node counts
+n1_values = [40] # Top-layer node counts
 n2_values = [30]  # Bottom-layer node counts
 p_values = [0.1, 0.2, 0.3, 0.4, ]  # Edge probabilities
 # p_values = [0.1]

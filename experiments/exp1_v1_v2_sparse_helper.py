@@ -26,7 +26,7 @@ from utility.bipartite_graph_generator import (
 from sifting.sifting_2 import sifting
 from branch_bound import branch_and_bound_oscm
 
-from sifting.crossing_function.crossing_func import cross_count
+from sifting.crossing_function.crossing_func import cross_count, cross_count_optimized
 
 vertex_counts = [10,]  # Example vertex counts for testing
 num_samples = 1  # Number of samples per vertex count
@@ -102,7 +102,7 @@ def minimize_crossings(fixed_layer, free_layer, edges):
     optimal_ordering = None
     print("Currently has", len(fixed_layer), "vertices",  edges)
     for perm in permutations(free_layer):
-        current_crossings = cross_count(fixed_layer, list(perm), edges)
+        current_crossings = cross_count_optimized(fixed_layer, list(perm), edges)
         if current_crossings < min_crossings:
             min_crossings = current_crossings
             optimal_ordering = perm
