@@ -100,7 +100,7 @@ def minimize_crossings(fixed_layer, free_layer, edges):
     """
     min_crossings = float('inf')
     optimal_ordering = None
-    print("Currently has", len(fixed_layer), "vertices",  edges)
+    # print("Currently has", len(fixed_layer), "vertices",  edges)
     for perm in permutations(free_layer):
         current_crossings = cross_count_optimized(fixed_layer, list(perm), edges)
         if current_crossings < min_crossings:
@@ -142,21 +142,35 @@ def run_experiment(n1, n2, num_samples):
         analyze_graph(B)
 
         pos_original = nx.bipartite_layout(B, top_nodes, align="horizontal")
-        crossings_original = count_crossings(B, pos_original)
-
+        # crossings_original = count_crossings(B, pos_original)
+        crossings_original = cross_count_optimized(top_nodes, bottom_nodes, edges)
         parsed_edges = parse_edges(edges, top_nodes, bottom_nodes)
+        
+        
         bottom_nodes_bary = barycenter(bottom_nodes, top_nodes, parsed_edges)
         pos_barycenter = update_positions(top_nodes, bottom_nodes_bary)
-        crossings_barycenter = count_crossings(B, pos_barycenter)
-
+        # crossings_barycenter = count_crossings(B, pos_barycenter)
+        crossings_barycenter = cross_count_optimized(top_nodes, bottom_nodes_bary, edges)
+        # if not (crossings_barycenter) == xsing_bary:
+        #     print(f"Condition failed. Stopping execution for {density}.")
+        #     sys.exit(1)
+            
         bottom_nodes_median = median(bottom_nodes, top_nodes, parsed_edges)
         pos_median = update_positions(top_nodes, bottom_nodes_median)
-        crossings_median = count_crossings(B, pos_median)
+        # crossings_median = count_crossings(B, pos_median)
+        crossings_median = cross_count_optimized(top_nodes, bottom_nodes_median, edges)
+        # if not (crossings_median) == xsing_med:
+        #     print(f"Condition failed. Stopping execution for {density}.")
+        #     sys.exit(1)
 
         sifting_heuristic = sifting(list(bottom_nodes), list(top_nodes), edges, verbose=0)
         pos_sifting = update_positions(top_nodes, sifting_heuristic)
-        crossings_sifting = count_crossings(B, pos_sifting)
-
+        # crossings_sifting = count_crossings(B, pos_sifting)
+        crossings_sifting = cross_count_optimized(top_nodes, sifting_heuristic, edges)
+        # print((crossings_sifting) == better_crossing)
+        # if not (crossings_sifting) == better_crossing:
+        #     print(f"Condition failed. Stopping execution for {density}.")
+        #     sys.exit(1)
         # print("DEBUG-executing brute force method.")
         bottom_nodes_optimal, crossings_optimal = minimize_crossings(list(top_nodes), list(bottom_nodes), edges)
         # bottom_nodes_bb = branch_and_bound_oscm(top_nodes, bottom_nodes, edges, verbose=1)
