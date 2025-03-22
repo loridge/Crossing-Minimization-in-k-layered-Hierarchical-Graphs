@@ -1,0 +1,2 @@
+n1,n2,num_samples,density,pred_density,avg_crossings_original,avg_crossings_barycenter,avg_crossings_median,avg_crossings_sifting,avg_crossings_optimal
+60,60,1,0.2,0.2,124874.0,104892.0,107106.0,104773.0,0

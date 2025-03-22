@@ -4,7 +4,7 @@ from typing import Union, List, Set
 # import copy
 
 from sifting.crossing_function.crossing_utils import node_neighbors
-from .crossing_function import cross_count
+from .crossing_function import cross_count, cross_count_optimized
 from .sifting_util2 import do_sifting
 # Sifting function
 def sifting_2(free_layer: list[str], fixed_layer: list[str], edges: list, verbose=0,) -> list:
@@ -124,7 +124,7 @@ def sifting(bottom_nodes, top_nodes, edges, verbose=0):
     # Apply the sifting heuristic
     for node in sorted_nodes:
         best_position = bottom_nodes.index(node)
-        best_crossings = cross_count(top_nodes, bottom_nodes, edges)
+        best_crossings = cross_count_optimized(top_nodes, bottom_nodes, edges)
         
         for j in range(len(bottom_nodes)):
             if bottom_nodes[j] == node:
@@ -133,7 +133,7 @@ def sifting(bottom_nodes, top_nodes, edges, verbose=0):
             # Swap node to new position
             bottom_nodes.remove(node)
             bottom_nodes.insert(j, node)
-            current_crossings = cross_count(top_nodes, bottom_nodes, edges)
+            current_crossings = cross_count_optimized(top_nodes, bottom_nodes, edges)
             
             if current_crossings < best_crossings:
                 best_position = j

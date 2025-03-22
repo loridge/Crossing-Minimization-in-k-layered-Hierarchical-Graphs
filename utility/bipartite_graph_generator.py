@@ -139,39 +139,49 @@ def forced_density_gen_bip_graph(n1, n2, density):
     return nodes, edges, B, top_nodes, bottom_nodes
 
 
-def visualize_bipartite_graph(B, bottom_nodes):
+import networkx as nx
+import matplotlib.pyplot as plt
+import itertools
+
+def visualize_bipartite_graph(B, bottom_nodes, title):
     """
-    Visualize a bipartite graph with horizontal layers.
+    Visualize a bipartite graph with improved aesthetics and horizontal layering.
     
     Args:
         B: The bipartite graph (NetworkX object).
-        bottom_nodes: The set of bottom_nodes nodes.
+        bottom_nodes: The set of bottom layer nodes.
     """
-    # Create a bipartite layout with horizontal orientation
+    # Generate bipartite layout with horizontal orientation
     pos = nx.bipartite_layout(B, bottom_nodes, align="horizontal")
-    #print("The pos is " + str(pos))
-    #horizontal_pos = {node: (y, -x) for node, (x, y) in pos.items()}  # Flip x and y for horizontal layers
+    
+    # Adjust node positions for better readability
+    layer_spacing = 2  # Adjust horizontal distance
+    vertical_offset = 1.5  # Adjust vertical layer spacing
 
-    # Draw the graph
+    # Separate nodes into layers
+    top_nodes = set(B.nodes()) - set(bottom_nodes)
+    layered_pos = {node: (x * layer_spacing, y * vertical_offset) for node, (x, y) in pos.items()}
+
+    # Generate pastel colors for each layer
+    pastel_colors = itertools.cycle(["#FFB3BA", "#FFDFBA", "#FFFFBA", "#BAFFC9", "#BAE1FF", "#D7BAFF", "#FFC0CB"])
+    layer_colors = {0: next(pastel_colors), 1: next(pastel_colors)}
+    node_colors = [layer_colors[0] if node in top_nodes else layer_colors[1] for node in B.nodes()]
+
+    # Draw the graph with enhanced aesthetics
     plt.figure(figsize=(10, 6))
-    nx.draw(
-        B,
-        pos=pos,
-        with_labels=True,
-        node_size=700,
-        node_color=['lightblue' if node in bottom_nodes else 'lightgreen' for node in B.nodes()],
-        edge_color="gray",
-        font_size=10,
-        font_color="black",
-    )
-    plt.title("Bipartite Graph Visualization", fontsize=14)
+    nx.draw_networkx_edges(B, layered_pos, edge_color="gray", alpha=0.6, width=1.5)
+    nx.draw_networkx_nodes(B, layered_pos, node_size=1500, node_color=node_colors, edgecolors="black")
+    nx.draw_networkx_labels(B, layered_pos, font_size=12, font_weight="bold")
+
+    # Display the graph
+    plt.title(title, fontsize=14)
     plt.axis("off")
-    plt.tight_layout()
     plt.show()
 
     # Calculate and display number of crossings
-    crossings = count_crossings(B, pos)
+    crossings = count_crossings(B, layered_pos)
     print(f"Number of edge crossings: {crossings}")
+
 
 
 def update_positions(top_nodes, bottom_nodes):

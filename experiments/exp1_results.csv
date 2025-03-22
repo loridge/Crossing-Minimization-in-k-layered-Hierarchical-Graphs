@@ -1,0 +1,4 @@
+n1,n2,density,avg_crossings_original,avg_crossings_barycenter,avg_crossings_median,avg_crossings_sifting,avg_crossings_optimal
+6,6,0.3333333333333332,27.55,12.5,12.65,12.5,12.5
+8,8,0.25,51.15,25.4,25.55,25.4,25.35
+10,10,0.20000000000000004,84.3,45.4,45.65,45.1,45.0

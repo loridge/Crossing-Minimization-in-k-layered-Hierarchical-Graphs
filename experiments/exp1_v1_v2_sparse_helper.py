@@ -8,6 +8,7 @@ import sys
 import time
 from itertools import permutations
 import random
+import numpy as np
 
 # Add the parent directory to sys.path to enable package imports
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -25,7 +26,7 @@ from utility.bipartite_graph_generator import (
 from sifting.sifting_2 import sifting
 from branch_bound import branch_and_bound_oscm
 
-from sifting.crossing_function.crossing_func import cross_count
+from sifting.crossing_function.crossing_func import cross_count, cross_count_optimized
 
 vertex_counts = [10,]  # Example vertex counts for testing
 num_samples = 1  # Number of samples per vertex count
@@ -99,9 +100,9 @@ def minimize_crossings(fixed_layer, free_layer, edges):
     """
     min_crossings = float('inf')
     optimal_ordering = None
-    print("Currently has", len(fixed_layer), "vertices",  edges)
+    # print("Currently has", len(fixed_layer), "vertices",  edges)
     for perm in permutations(free_layer):
-        current_crossings = cross_count(fixed_layer, list(perm), edges)
+        current_crossings = cross_count_optimized(fixed_layer, list(perm), edges)
         if current_crossings < min_crossings:
             min_crossings = current_crossings
             optimal_ordering = perm
@@ -138,22 +139,38 @@ def run_experiment(n1, n2, num_samples):
         density = bipartite.density(B, top_nodes)
         total_density += density
 
-        pos_original = nx.bipartite_layout(B, top_nodes, align="horizontal")
-        crossings_original = count_crossings(B, pos_original)
+        analyze_graph(B)
 
+        pos_original = nx.bipartite_layout(B, top_nodes, align="horizontal")
+        # crossings_original = count_crossings(B, pos_original)
+        crossings_original = cross_count_optimized(top_nodes, bottom_nodes, edges)
         parsed_edges = parse_edges(edges, top_nodes, bottom_nodes)
+        
+        
         bottom_nodes_bary = barycenter(bottom_nodes, top_nodes, parsed_edges)
         pos_barycenter = update_positions(top_nodes, bottom_nodes_bary)
-        crossings_barycenter = count_crossings(B, pos_barycenter)
-
+        # crossings_barycenter = count_crossings(B, pos_barycenter)
+        crossings_barycenter = cross_count_optimized(top_nodes, bottom_nodes_bary, edges)
+        # if not (crossings_barycenter) == xsing_bary:
+        #     print(f"Condition failed. Stopping execution for {density}.")
+        #     sys.exit(1)
+            
         bottom_nodes_median = median(bottom_nodes, top_nodes, parsed_edges)
         pos_median = update_positions(top_nodes, bottom_nodes_median)
-        crossings_median = count_crossings(B, pos_median)
+        # crossings_median = count_crossings(B, pos_median)
+        crossings_median = cross_count_optimized(top_nodes, bottom_nodes_median, edges)
+        # if not (crossings_median) == xsing_med:
+        #     print(f"Condition failed. Stopping execution for {density}.")
+        #     sys.exit(1)
 
         sifting_heuristic = sifting(list(bottom_nodes), list(top_nodes), edges, verbose=0)
         pos_sifting = update_positions(top_nodes, sifting_heuristic)
-        crossings_sifting = count_crossings(B, pos_sifting)
-
+        # crossings_sifting = count_crossings(B, pos_sifting)
+        crossings_sifting = cross_count_optimized(top_nodes, sifting_heuristic, edges)
+        # print((crossings_sifting) == better_crossing)
+        # if not (crossings_sifting) == better_crossing:
+        #     print(f"Condition failed. Stopping execution for {density}.")
+        #     sys.exit(1)
         # print("DEBUG-executing brute force method.")
         bottom_nodes_optimal, crossings_optimal = minimize_crossings(list(top_nodes), list(bottom_nodes), edges)
         # bottom_nodes_bb = branch_and_bound_oscm(top_nodes, bottom_nodes, edges, verbose=1)
@@ -175,3 +192,36 @@ def run_experiment(n1, n2, num_samples):
     results["avg_crossings_optimal"] /= num_samples
 
     return results  # Ensure this line is present!
+
+def analyze_graph(B):
+    """
+    Analyzes the degree distribution and connectivity of a bipartite graph.
+    """
+    degrees = dict(B.degree())
+    degree_values = list(degrees.values())
+
+    # Compute degree statistics
+    avg_degree = np.mean(degree_values)
+    max_degree = np.max(degree_values)
+    min_degree = np.min(degree_values)
+    #density = nx.density(B)   
+
+    print(f"📊 Degree Analysis:", flush=True)
+    print(f"Degrees are: {degrees}", flush=True) 
+    print(f"   - Average Degree: {avg_degree:.2f} (Expected: ≈2)", flush=True)
+    print(f"   - Max Degree: {max_degree}", flush=True)
+    print(f"   - Min Degree: {min_degree}", flush=True)
+    #print(f"   - Edge Density: {density:.4f}", flush=True)
+
+    # Plot degree distribution
+    # plt.hist(degree_values, bins=range(min_degree, max_degree + 1), align='left', edgecolor='black')
+    # plt.xlabel("Degree")
+    # plt.ylabel("Frequency")
+    # plt.title("Degree Distribution")
+    # plt.show()
+
+    # Check if the graph is connected
+    if nx.is_connected(B):
+        print("✅ Graph is fully connected.")
+    else:
+        print(f"❌ Graph has {nx.number_connected_components(B)} connected components.")
