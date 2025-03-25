@@ -57,18 +57,19 @@ def generate_sparse_bipartite_graph(n1, n2):
     # Ensure each top node has at least one connection
     bottom_list = list(bottom_nodes)
     random.shuffle(bottom_list)  # Shuffle to randomize assignment
-    for i, top in enumerate(top_nodes):
-        bottom = bottom_list[i % n2]  # Ensure at least one connection
-        edges.add((top, bottom))
-        B.add_edge(top, bottom)  # Add to graph
+    # for i, top in enumerate(top_nodes):
+    #     bottom = bottom_list[i % n2]  # Ensure at least one connection
+    #     edges.add((top, bottom))
+    #     B.add_edge(top, bottom)  # Add to graph
 
+    # COMMENTED OUT TO ALLOW SINGLETONS
     # Ensure each bottom node has at least one connection
     top_list = list(top_nodes)
-    random.shuffle(top_list)
-    for i, bottom in enumerate(bottom_nodes):
-        top = top_list[i % n1]  # Ensure at least one connection
-        edges.add((top, bottom))
-        B.add_edge(top, bottom)  # Add to graph
+    # random.shuffle(top_list)
+    # for i, bottom in enumerate(bottom_nodes):
+    #     top = top_list[i % n1]  # Ensure at least one connection
+    #     edges.add((top, bottom))
+    #     B.add_edge(top, bottom)  # Add to graph
 
     # Add remaining edges until we reach |E| = |V1| + |V2|
     while len(edges) < (n1 + n2):

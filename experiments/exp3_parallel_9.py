@@ -46,20 +46,20 @@ def forced_density_gen_bip_graph(n1, n2, density):
 
     edges = set()
 
-    # Step 1: Ensure each node gets at least one connection
+    # Step 1: Shuffle
     top_list = list(top_nodes)
     bottom_list = list(bottom_nodes)
     random.shuffle(top_list)
     random.shuffle(bottom_list)
 
     # note that katapat nya yung meron, 
-    for i in range(max(n1, n2)):
-        u = top_list[i % n1]  # Cycle through top nodes
-        v = bottom_list[i % n2]  # Cycle through bottom nodes
-        edges.add((u, v))
-        B.add_edge(u, v)
+    # for i in range(max(n1, n2)):
+    #     u = top_list[i % n1]  # Cycle through top nodes
+    #     v = bottom_list[i % n2]  # Cycle through bottom nodes
+    #     edges.add((u, v))
+    #     B.add_edge(u, v)
 
-    # Step 2: Distribute remaining edges evenly across the vertices
+    # Step 2: Randomly add edges based on density (no forced connections)
     while len(edges) < num_edges:
         u = random.choice(top_list)
         v = random.choice(bottom_list)
