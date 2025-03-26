@@ -115,12 +115,15 @@ def forced_density_gen_bip_graph(n1, n2, density):
 # nodes, edges, B, top_nodes, bottom_nodes = generate_sparse_bipartite_graph(4, 4)
 # visualize_bipartite_graph(B, bottom_nodes, "sparse n-m bipartite graph")
 
-nodes, edges, B, top_nodes, bottom_nodes = forced_density_gen_bip_graph(4, 4, 0.3)
+nodes, edges, B, top_nodes, bottom_nodes = forced_density_gen_bip_graph(6, 6, 0.3)
 visualize_bipartite_graph(B, bottom_nodes, "4-4 30% dense bipartite graph")
 
 parsed_edges = parse_edges(edges, top_nodes, bottom_nodes)
 bary_bot = barycenter(bottom_nodes, top_nodes, parsed_edges)
-visualize_bipartite_graph(B, bary_bot, "barycenter")
+# visualize_bipartite_graph(B, bary_bot, "barycenter")
 
 median_bot = median(bottom_nodes, top_nodes, parsed_edges)
-visualize_bipartite_graph(B, median_bot, "median")
+# visualize_bipartite_graph(B, median_bot, "median")
+
+sifting_bot = sifting(bottom_nodes, top_nodes, edges)
+visualize_bipartite_graph(B, sifting_bot, "sifting")

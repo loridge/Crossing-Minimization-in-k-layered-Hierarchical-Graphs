@@ -49,10 +49,10 @@ def plot_results_percentage_outliers(df, message=""):
                     (subset["avg_crossings_optimal"] / subset["avg_crossings_optimal"]) * 100
                 )
                 
-                print(y_barycenter)
-                print(y_median)
-                print(y_sifting)
-                print(y_optimal)
+                # print(y_barycenter)
+                # print(y_median)
+                # print(y_sifting)
+                # print(y_optimal)
                 # Find min and max y-values
                 y_min = max(100, min(y_barycenter.min(), y_median.min(), y_sifting.min(), y_optimal.min()))
                 y_max = max(y_barycenter.max(), y_median.max(), y_sifting.max(), y_optimal.max())
