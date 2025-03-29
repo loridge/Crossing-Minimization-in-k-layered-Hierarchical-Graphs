@@ -17,7 +17,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 """
     Notes: 
-    - May difference pa rin between the actual density and predicted density. This is more prominent in sparse graphs. Its either we ceiling or floor the 
+    - May difference pa rin between the actual density and predicted density. This is more prominent in "sparser" density graphs. Its either we ceiling or floor the 
     number of edges. e.g. 0.1 density n=4,m=2. 0.1*n*m=0.8. but num_edges=1. 1/8=0.125 actual density
     
     -Sifting used here is not adjusted to isolate the singletons in one side. this might affect the solution in k-layered graphs
