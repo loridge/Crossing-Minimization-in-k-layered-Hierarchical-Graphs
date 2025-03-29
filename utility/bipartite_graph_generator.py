@@ -323,10 +323,11 @@ def plot_results(df):
                 # Show the plot
                 plt.show()
 
-
-def plot_results_percentage_outliers(df, message=""):
+# def plot_results_percentage_outliers(df, message="",):
+def plot_results_percentage_outliers(df, message="", save_dir="plot_results", filename=None):
+    # (B, bottom_nodes, title, save_dir="graphs", filename=None)
     """
-    Plots the experiment results. Also includes optional message for the title.
+    Plots and Save the experiment results. Also includes optional message for the title.
     Each combination of n1 and n2 will have its own line for each heuristic,
     using graph density instead of edge probability on the x-axis.
     """
@@ -395,14 +396,26 @@ def plot_results_percentage_outliers(df, message=""):
                 plt.plot(x, y_optimal, label="Optimal (Brute Force)", marker="x")
                 plt.yscale('log')
                 # Add labels and title
-                plt.title(f"Crossings for n1 = {n1}, n2 = {n2}, {message}")
+                plt.title(f"Crossings for n1={n1}, n2={n2}, {message}")
                 plt.xlabel("Graph Density")
                 plt.ylabel("In percentage of the minimum number of crossings")
                 plt.legend()
                 plt.grid(True)
                 
-                # Save result
-                plt.savefig(f"exp3_results_{n1}+{n2}.png")
+                # Make directory
+                os.makedirs(save_dir, exist_ok=True)
+                
+                # Make the file name
+                if filename==None:
+                    filename="plot_results"
+                png_file=f"{filename}_results_{n1}+{n2}.png"
+                csv_file=f'{filename}_results_{n1}+{n2}.csv'
+                # join the new folder directory and the filename
+                save_path_png = os.path.join(save_dir, png_file)
+                save_path_csv = os.path.join(save_dir, csv_file)
+                plt.savefig(save_path_png, dpi=300, bbox_inches="tight")
+                df.to_csv(save_path_csv, index=False)
                 
                 # Show the plot
-                plt.show()
+                # plt.show()
+                plt.close()
