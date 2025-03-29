@@ -4,13 +4,19 @@ import random, math
 from networkx.readwrite import json_graph
 import json, sys,os
 import time
-from exp1_v1_v2_sparse_helper import generate_sparse_bipartite_graph
+# from exp1_v1_v2_sparse_helper import generate_sparse_bipartite_graph
 # Load JSON file
 # Add the parent directory to sys.path to enable package imports
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
-    
+
+for i in sys.path:
+    if ('PythonSoftware' not in i):
+        # print(i)
+        pass
+
 from bary_med.two_layer_barycenter import barycenter, parse_edges, median
 from sifting.sifting_2 import sifting
 from utility.bipartite_graph_generator import (
@@ -18,7 +24,8 @@ from utility.bipartite_graph_generator import (
     update_positions,
     plot_results,
     generate_bipartite_graph,
-    visualize_bipartite_graph
+    visualize_bipartite_graph,
+    visualize_bipartite_graph_save_file
 )
 
 def forced_density_gen_bip_graph(n1, n2, density):
@@ -115,15 +122,13 @@ def forced_density_gen_bip_graph(n1, n2, density):
 # nodes, edges, B, top_nodes, bottom_nodes = generate_sparse_bipartite_graph(4, 4)
 # visualize_bipartite_graph(B, bottom_nodes, "sparse n-m bipartite graph")
 
-nodes, edges, B, top_nodes, bottom_nodes = forced_density_gen_bip_graph(6, 6, 0.3)
-visualize_bipartite_graph(B, bottom_nodes, "4-4 30% dense bipartite graph")
-
+nodes, edges, B, top_nodes, bottom_nodes = forced_density_gen_bip_graph(4, 7, 0.3)
+visualize_bipartite_graph_save_file(B, bottom_nodes, "4-4 30% dense bipartite graph", "function_experiments_results", f"orig.png")
 parsed_edges = parse_edges(edges, top_nodes, bottom_nodes)
 bary_bot = barycenter(bottom_nodes, top_nodes, parsed_edges)
-# visualize_bipartite_graph(B, bary_bot, "barycenter")
+visualize_bipartite_graph_save_file(B, bary_bot, "barycenter", "function_experiments_results", f"bary.png")
 
 median_bot = median(bottom_nodes, top_nodes, parsed_edges)
-# visualize_bipartite_graph(B, median_bot, "median")
 
 sifting_bot = sifting(bottom_nodes, top_nodes, edges)
-visualize_bipartite_graph(B, sifting_bot, "sifting")
+visualize_bipartite_graph_save_file(B, sifting_bot, "sifting", "function_experiments_results", f"sifting.png")

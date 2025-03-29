@@ -5,5 +5,7 @@ __all__ = [
     "generate_bipartite_graph",
     "update_positions",
     "plot_results",
-    "forced_density_gen_bip_graph"
+    "forced_density_gen_bip_graph",
+    "visualize_bipartite_graph_save_file",
+    "plot_results_percentage_outliers",
 ]

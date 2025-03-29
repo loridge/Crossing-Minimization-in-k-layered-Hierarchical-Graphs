@@ -1,6 +1,12 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
+""" 
+- parse_edges - for compatibility with the barycenter and median
+- barycenter
+- median
+"""
+
 # Helper function to parse edge format
 def parse_edges(edges, top_nodes, bottom_nodes):
     """

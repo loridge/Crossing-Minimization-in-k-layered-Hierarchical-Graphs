@@ -93,10 +93,11 @@ def visualize_k_layered_graph(G, layers, title):
     plt.axis("off")
     plt.show()
 
-# Example usage:
-k = 6  # Number of layers
-n = 5  # Number of vertices in odd layers
-m = 3  # Number of vertices in even layers
+if __name__ == "__main__":
+    # Example usage:
+    k = 6  # Number of layers
+    n = 5  # Number of vertices in odd layers
+    m = 3  # Number of vertices in even layers
 
-nodes, formatted_edges, G, layers = generate_k_layered_sparse_graph(k, n, m)
-visualize_k_layered_graph(G, layers, "K-Layered Sparse Graph")
+    nodes, formatted_edges, G, layers = generate_k_layered_sparse_graph(k, n, m)
+    visualize_k_layered_graph(G, layers, "K-Layered Sparse Graph")
