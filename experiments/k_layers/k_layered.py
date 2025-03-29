@@ -70,7 +70,8 @@ def visualize_k_layered_graph(G, layers, title):
     # Assign positions for each node
     for i, layer in enumerate(layers):
         x_offset = -len(layer) / 2  # Center nodes in each layer
-        for j, node in enumerate(sorted(layer)):  # Sorting for consistency
+        # for j, node in enumerate(sorted(layer)):  # Sorting for consistency
+        for j, node in enumerate(layer): # unsorted to show real ordering
             pos[node] = (x_offset + j * node_gap, -i * layer_gap)
 
     # Generate pastel colors for each layer
