@@ -13,3 +13,5 @@ env/
 .DS_Store
 .idea/
 .vscode/
+
+*.batch
