@@ -452,7 +452,12 @@ def run_experiment(n1, n2, p, num_samples):
         "avg_crossings_barycenter": 0,
         "avg_crossings_median": 0,
         "avg_crossings_sifting": 0,
-        "avg_crossings_optimal": 0
+        "avg_crossings_optimal": 0,
+        "avg_tot_time_bar":0,
+        "avg_tot_time_med":0,
+        "avg_tot_time_sif":0,
+        "avg_tot_time_opt":0,
+        "avg_tot_time":0
     }
     for _ in range(num_samples):
         # Generate bipartite graph
@@ -472,15 +477,20 @@ def run_experiment(n1, n2, p, num_samples):
         parsed_edges = parse_edges(edges, top_nodes, bottom_nodes)
         
         # Apply Barycenter heuristic to reorder bottom nodes
+        
+        start_bar = time.time()
         bottom_nodes_bary = barycenter(bottom_nodes, top_nodes, parsed_edges)
+        end_bar = time.time()
+        crossings_barycenter = cross_count_optimized(top_nodes, bottom_nodes_bary, edges)
 
         # Update positions: top nodes fixed, bottom nodes reordered
         # pos_barycenter = update_positions(top_nodes, bottom_nodes_bary)
         # crossings_barycenter = count_crossings(B, pos_barycenter)
-        crossings_barycenter = cross_count_optimized(top_nodes, bottom_nodes_bary, edges)
 
         # Apply Median heuristic to reorder bottom nodes
+        start_med = time.time()
         bottom_nodes_median = median(bottom_nodes, top_nodes, parsed_edges)
+        end_med = time.time()
         crossings_median = cross_count_optimized(top_nodes, bottom_nodes_median, edges)
 
         # Update positions: top nodes fixed, bottom nodes reordered
@@ -488,16 +498,26 @@ def run_experiment(n1, n2, p, num_samples):
         # crossings_median = count_crossings(B, pos_median)
 
         # Apply Simple Sifting heuristic to reorder bottom nodes
+        start_sif = time.time()
         sifting_heuristic = sifting(bottom_nodes, top_nodes, edges, verbose=0, )
+        end_sif = time.time()
         crossings_sifting = cross_count_optimized(top_nodes, sifting_heuristic,edges)
         
+        start_opt = time.time()
         bottom_nodes_optimal, crossings_optimal = minimize_crossings(list(top_nodes), list(bottom_nodes), edges)
-        
+        end_opt = time.time()
+
         result["avg_crossings_original"] += crossings_original
         result["avg_crossings_barycenter"] += crossings_barycenter
         result["avg_crossings_median"] += crossings_median
         result["avg_crossings_sifting"] += crossings_sifting
         result["avg_crossings_optimal"] += crossings_optimal
+        
+        result["avg_tot_time_bar"] += (end_bar-start_bar)
+        result["avg_tot_time_med"] += (end_med-start_med)
+        result["avg_tot_time_sif"] += (end_sif-start_sif)
+        result["avg_tot_time_opt"] += (end_opt-start_opt)
+        result["avg_tot_time"] += (end_bar-start_bar) + (end_med-start_med) + (end_sif-start_sif) + (end_opt-start_opt)
 
 
     # Store results
@@ -510,6 +530,12 @@ def run_experiment(n1, n2, p, num_samples):
     result["avg_crossings_median"] /= num_samples
     result["avg_crossings_sifting"] /= num_samples
     result["avg_crossings_optimal"] /= num_samples
+    
+    result["avg_tot_time_bar"] /= num_samples
+    result["avg_tot_time_med"] /= num_samples
+    result["avg_tot_time_sif"] /= num_samples
+    result["avg_tot_time_opt"] /= num_samples
+    result["avg_tot_time"] /= num_samples
     return result
 
 
@@ -529,7 +555,8 @@ if __name__ == '__main__':
             
             
             results=[]
-            num_samples = 10
+            num_samples = 20
+            # changed
             p_values = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
             with ProcessPoolExecutor() as executor:
                 futures = []
@@ -548,5 +575,5 @@ if __name__ == '__main__':
             
             df = pd.DataFrame(results)
             
-            plot_results_percentage_outliers(df, f"{num_samples} Samples-generator is ceil", "exp4_n-m_1", 'exp4')
+            plot_results_percentage_outliers(df, f"{num_samples} Samples-generator is ceil", "exp4_n-m_20", 'exp4-20')
         print("\n")
