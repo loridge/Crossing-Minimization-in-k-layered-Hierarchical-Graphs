@@ -558,7 +558,7 @@ if __name__ == '__main__':
             num_samples = 20
             # changed
             p_values = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
-            with ProcessPoolExecutor() as executor:
+            with ProcessPoolExecutor(max_workers=6) as executor:
                 futures = []
                 # for n1 in n1_values:
                 #     for n2 in n2_values:
