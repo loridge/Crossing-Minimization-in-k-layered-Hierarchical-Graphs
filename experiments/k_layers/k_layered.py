@@ -94,6 +94,7 @@ def visualize_k_layered_graph(G, layers, title):
     plt.axis("off")
     plt.show()
 
+
 if __name__ == "__main__":
     # Example usage:
     k = 6  # Number of layers

@@ -25,12 +25,31 @@ def total_crossing_count_k_layer(layers, edges):
     for i in range(len(layers)-1):
         top_layer=list(layers[i])
         bottom_layer=list(layers[i+1])
-        # print(f"top {top_layer} bottom {bottom_layer}")
         layer_crossing=cross_count_optimized(top_layer, bottom_layer, edges)
         total_crossings+=layer_crossing
-        # print(f"Layer {i}={i+1} Crossing: {layer_crossing}\n")
+        
+    ### I believe we can accelerate this by dividing a k-layered graph recursively, sub problems instead of iterating every layer
+    
     return total_crossings
 
+def total_crossing_count_k_layers_speedup(layers, edges):
+    #   reorderable layers = layers - 1 
+    #   
+    #
+    #
+    #
+    #
+    #
+    #
+    
+    reorderable_layers = len(layers) - 1
+    mid = reorderable_layers // 2
+    if (len(layers)==2):
+        return cross_count_optimized(layers[0], layers[1], edges)
+    else:   
+        return total_crossing_count_k_layers_speedup(layers[:mid],edges) + total_crossing_count_k_layers_speedup(layers[mid + 1:], edges)
+    
+    pass
 
 if __name__=="__main__":
     k = 4  # Number of layers
