@@ -64,7 +64,8 @@ def visualize_k_layered_graph(G, layers, title):
     - layers: A list of sets, where each set contains nodes for that layer.
     """
     pos = {}
-    layer_gap = 2  # Vertical spacing between layers
+    # layer_gap = 2  # Vertical spacing between layers
+    layer_gap = 5
     node_gap = 1.5  # Horizontal spacing within layers
 
     # Assign positions for each node

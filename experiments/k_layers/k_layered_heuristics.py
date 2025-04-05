@@ -31,6 +31,7 @@ from k_layer_crossing import (
 
 def update_k_layered_graph(G, edges):
     # is dis needed
+    # no longer needed as LA's visualizer calculates the pos data structure again
     pass
 
 def hybrid_2(layers, edges: list[list], l_cutoff):
@@ -49,9 +50,9 @@ def hybrid_2(layers, edges: list[list], l_cutoff):
     # 0,1,2,3,4,5,6,7,8,9, are the indices of the layer
     # layer cutoff is the last layer that 
     
-    # if l is the index of the layer where the last sifting will be sweeped, then all possible values must only be 1 to n-1 where n is len(layer_list)
+    # if l is the index of the layer where the last sifting will be sweeped, then all possible values must only be 0 to n-1 where n is len(layer_list)
     # hence we implement a check here 
-    if (1 <= l_cutoff <= (len(layers) - 1)) is False:
+    if (0 <= l_cutoff <= (len(layers) - 1)) is False:
         print(f"Invalid l_cutoff value, it must be from 1 to {len(layers) - 1}")
         exit(0)
     
@@ -85,52 +86,54 @@ def hybrid_2(layers, edges: list[list], l_cutoff):
     current_crossings = float('inf')
     
     print(f"The layers are {listify_layers}")
-    while (forgiveness_number != 0):
-        # determine what a sweep is, and refactor this at the soonest
-        
-        # down sweep
-        for i in range(1, l_cutoff + 1): # [1, l_cutoff] is the real range
-            # i are the indices of the free_layers in the downward sweep
-            print(f"At iter {i}, the bottom_nodes are {listify_layers[i]}")
-            reordered_layer = sifting(listify_layers[i], listify_layers[i - 1], layerfy_edges[i])
-            listify_layers[i] = reordered_layer
-            print(f"Downward sweep {i}, {listify_layers}")
+    
+    if l_cutoff !=0:
+        while (forgiveness_number != 0):
+            # determine what a sweep is, and refactor this at the soonest
+            # down sweep
+            for i in range(1, l_cutoff + 1): # [1, l_cutoff] is the real range
+                # i are the indices of the free_layers in the downward sweep
+                print(f"At iter {i}, the bottom_nodes are {listify_layers[i]}")
+                reordered_layer = sifting(listify_layers[i], listify_layers[i - 1], layerfy_edges[i])
+                listify_layers[i] = reordered_layer
+                print(f"Downward sweep {i}, {listify_layers}")
+                
+            current_crossings = total_crossing_count_k_layer(listify_layers, edges)
             
-        current_crossings = total_crossing_count_k_layer(listify_layers, edges)
-        
-        
-        if current_crossings < min_crossings:
-            print("hello")
-            min_crossings = current_crossings ### DO WE IMPLEMENT THE SAVING OF THE DATA STRUCTURE
-        else: # current >= min # did not improve or worse.
-            forgiveness_number -= 1
             
-        if forgiveness_number == 0: break
-        
-        # up sweep
-        for j in range(l_cutoff - 1, -1, -1): # [l_cutoff - 1, 0] is the real range
-            # j should be the indices of the 'top_layer' that is the free_layer in upward sweep
-            print(f"At iter {j}, the free_nodes are {listify_layers[j]}")
-            print(f"Listify layer {j}:{listify_layers[j]}, {j+1}:{listify_layers[j+1]}, {layerfy_edges[j+1]}")
-            reordered_layer = sifting(listify_layers[j], listify_layers[j + 1], layerfy_edges[j+1], 'upward')
-            listify_layers[j] = reordered_layer
-            print(f"upward sweep {j}, {listify_layers}")
-        
-        current_crossings = total_crossing_count_k_layer(listify_layers, edges)
-        
-        if current_crossings < min_crossings:
-            min_crossings = current_crossings   ### DO WE IMPLEMENT THE SAVING OF THE DATA STRUCTURE
-        else: # current >= min # did not improve or worse.
-            forgiveness_number -= 1
+            if current_crossings < min_crossings:
+                # print("hello")
+                min_crossings = current_crossings ### DO WE IMPLEMENT THE SAVING OF THE DATA STRUCTURE
+            else: # current >= min # did not improve or worse.
+                forgiveness_number -= 1
+                
+            if forgiveness_number == 0: break
             
-        if forgiveness_number == 0: break
+            # up sweep
+            for j in range(l_cutoff - 1, -1, -1): # [l_cutoff - 1, 0] is the real range
+                # j should be the indices of the 'top_layer' that is the free_layer in upward sweep
+                print(f"At iter {j}, the free_nodes are {listify_layers[j]}")
+                print(f"Listify layer {j}:{listify_layers[j]}, {j+1}:{listify_layers[j+1]}, {layerfy_edges[j+1]}")
+                reordered_layer = sifting(listify_layers[j], listify_layers[j + 1], layerfy_edges[j+1], 'upward')
+                listify_layers[j] = reordered_layer
+                print(f"upward sweep {j}, {listify_layers}")
+            
+            current_crossings = total_crossing_count_k_layer(listify_layers, edges)
+            
+            if current_crossings < min_crossings:
+                min_crossings = current_crossings   ### DO WE IMPLEMENT THE SAVING OF THE DATA STRUCTURE
+            else: # current >= min # did not improve or worse.
+                forgiveness_number -= 1
+                
+            if forgiveness_number == 0: break
     
     #### barycenter one sweep
-    for layer_idx in range(l_cutoff + 1, len(layers)):
-        #l_cutoff+1 because we want all the 'lower' layers, len(edges) because max_idx+1=len(deges)
-        formatted_edges = parse_edges(edges, listify_layers[layer_idx - 1], listify_layers[layer_idx])
-        baryed_free_layer = barycenter(listify_layers[layer_idx], listify_layers[layer_idx - 1], formatted_edges)
-        listify_layers[layer_idx] = baryed_free_layer
+    if l_cutoff != (len(layers) - 1):
+        for layer_idx in range(l_cutoff + 1, len(layers)):
+            #l_cutoff+1 because we want all the 'lower' layers, len(edges) because max_idx+1=len(deges)
+            formatted_edges = parse_edges(edges, listify_layers[layer_idx - 1], listify_layers[layer_idx])
+            baryed_free_layer = barycenter(listify_layers[layer_idx], listify_layers[layer_idx - 1], formatted_edges)
+            listify_layers[layer_idx] = baryed_free_layer
         
     return listify_layers
     # update pos after all rearrangements has been made, for the sake of the graph visualizer
@@ -140,13 +143,13 @@ def hybrid_2(layers, edges: list[list], l_cutoff):
     
 
 if __name__ == "__main__":
-    k = 4
-    n = 4
-    m = 5
+    k = 10
+    n = 100
+    m = 100
     nodes, edges, G, layers = generate_k_layered_sparse_graph(k, n, m)
     # print(nodes, layers)
 
-    new_layers = hybrid_2(layers, edges, 1)
+    new_layers = hybrid_2(layers, edges, 0)
     
     a = total_crossing_count_k_layer(layers, edges)
     print(a)
