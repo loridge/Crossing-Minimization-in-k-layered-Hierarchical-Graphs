@@ -267,10 +267,10 @@ def hybrid_2(layers, edges: list[list], l_cutoff) -> list[list]:
             # down sweep
             for i in range(1, l_cutoff + 1): # [1, l_cutoff] is the real range
                 # i are the indices of the free_layers in the downward sweep
-                print(f"At iter {i}, the bottom_nodes are {listify_layers[i]}")
+                # print(f"At iter {i}, the bottom_nodes are {listify_layers[i]}")
                 reordered_layer = sifting(listify_layers[i], listify_layers[i - 1], layerfy_edges[i])
                 listify_layers[i] = reordered_layer
-                print(f"Downward sweep {i}, {listify_layers}")
+                # print(f"Downward sweep {i}, {listify_layers}")
                 
             current_crossings = total_crossing_count_k_layer(listify_layers, edges)
             
@@ -286,11 +286,11 @@ def hybrid_2(layers, edges: list[list], l_cutoff) -> list[list]:
             # up sweep
             for j in range(l_cutoff - 1, -1, -1): # [l_cutoff - 1, 0] is the real range
                 # j should be the indices of the 'top_layer' that is the free_layer in upward sweep
-                print(f"At iter {j}, the free_nodes are {listify_layers[j]}")
-                print(f"Listify layer {j}:{listify_layers[j]}, {j+1}:{listify_layers[j+1]}, {layerfy_edges[j+1]}")
+                # print(f"At iter {j}, the free_nodes are {listify_layers[j]}")
+                # print(f"Listify layer {j}:{listify_layers[j]}, {j+1}:{listify_layers[j+1]}, {layerfy_edges[j+1]}")
                 reordered_layer = sifting(listify_layers[j], listify_layers[j + 1], layerfy_edges[j+1], 'upward')
                 listify_layers[j] = reordered_layer
-                print(f"upward sweep {j}, {listify_layers}")
+                # print(f"upward sweep {j}, {listify_layers}")
             
             current_crossings = total_crossing_count_k_layer(listify_layers, edges)
             
