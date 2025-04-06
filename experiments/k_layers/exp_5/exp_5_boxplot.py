@@ -104,7 +104,7 @@ plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.tight_layout()
 
 # Save the boxplot
-boxplot_filename = "crossing_reduction_boxplot.png"
+boxplot_filename = "exp_5_boxplot.png"
 plt.savefig(boxplot_filename, dpi=300)
 print(f"Boxplot saved as '{boxplot_filename}'.")
 

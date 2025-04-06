@@ -100,6 +100,33 @@ plot_filename = "exp_5_bar_plot.png"
 plt.savefig(plot_filename, dpi=300)  # high-res PNG
 print(f"Plot saved as '{plot_filename}'.")
 
+# === Boxplot version of results ===
+plt.figure(figsize=(14, 6))
+
+# Prepare data and labels
+data = [values for values in reductions.values()]
+labels = [key for key in reductions.keys()]
+
+# Create boxplot
+plt.boxplot(data, labels=labels, patch_artist=True,
+            boxprops=dict(facecolor='lightblue', color='blue'),
+            medianprops=dict(color='red'),
+            whiskerprops=dict(color='gray'),
+            capprops=dict(color='gray'),
+            flierprops=dict(markerfacecolor='orange', marker='o', markersize=5, linestyle='none'))
+
+plt.ylabel("Crossing Reduction (%)")
+plt.xlabel("Heuristic Type")
+plt.title(f"Distribution of % Crossing Reduction Across {num_samples} Samples")
+plt.xticks(rotation=45, ha='right')
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.tight_layout()
+
+# Save the boxplot
+boxplot_filename = "exp_5_boxplot.png"
+plt.savefig(boxplot_filename, dpi=300)
+print(f"Boxplot saved as '{boxplot_filename}'.")
+
 # To JSON
 with open("exp_5_bar_plot.json", "w") as f:
     json.dump(reductions, f, indent=4)
