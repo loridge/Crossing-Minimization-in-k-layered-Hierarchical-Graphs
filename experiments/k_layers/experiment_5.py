@@ -36,8 +36,8 @@ from k_layered import (
 # === CONFIG ===
 num_samples = 20
 k = 10  # number of layers
-n = 8   # nodes per layer
-m = 4   # edge density control
+n = 8   # nodes per layer (even layer)
+m = 4   # nodes per layer (odd layer)
 
 # === Initialize result collector ===
 reductions = {
