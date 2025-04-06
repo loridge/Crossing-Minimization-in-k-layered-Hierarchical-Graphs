@@ -52,7 +52,7 @@ def hybrid_1_permu_bary(layers, edges)->list[list]:
         new_ordering_layers (_list[list]_): New reordering of nodes of each
             layer that reduces the number of crossings in the whole graph.
     """
-    forgiveness_number = 20 # Source: Patarasuk(2004)
+    forgiveness_number = 40 # Source: Patarasuk(2004)
     threshold_size = 6 # Source: Patarasuk(2004)
     
     listify_layers = [list(i) for i in layers]
@@ -132,7 +132,7 @@ def hybrid_1_sift_bary(layers, edges) -> list[list]:
             layer that reduces the number of crossings in the whole graph.
     """
     
-    forgiveness_number = 20 # recheck sa paper
+    forgiveness_number = 40 # recheck sa paper
     threshold_size = 6
     k = len(layers)
     listify_layers = [list(i) for i in layers]
@@ -163,7 +163,9 @@ def hybrid_1_sift_bary(layers, edges) -> list[list]:
                 parsed_edges = parse_edges(layerfy_edges[i], listify_layers[i - 1], listify_layers[i])
                 reordered_layer = barycenter(listify_layers[i], listify_layers[i - 1], parsed_edges)
             listify_layers[i] = reordered_layer
-            
+        
+        # do we update the original listify_layers only if there is an improvement? so like do we copy the data structure then see if it imptoves.
+        
         current_crossings = total_crossing_count_k_layer(listify_layers, edges)
         
         if current_crossings < min_crossings:

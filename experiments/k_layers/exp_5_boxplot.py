@@ -34,7 +34,7 @@ from k_layered import (
 )
 
 # === CONFIG ===
-num_samples = 20
+num_samples = 100
 k = 10  # number of layers
 n = 8   # nodes per layer
 m = 4   # edge density control
@@ -47,6 +47,15 @@ reductions = {
 
 for cutoff in range(k):
     reductions[f"hybrid_2_cutoff_{cutoff}"] = []
+    
+
+# === Initialize timing collector ===
+timings = {
+    "hybrid_1_permu_bary": [],
+    "hybrid_1_sift_bary": [],
+}
+for cutoff in range(k):
+    timings[f"hybrid_2_cutoff_{cutoff}"] = []
 
 # === Main loop ===
 for run in range(num_samples):
@@ -72,28 +81,35 @@ for run in range(num_samples):
         percent_reduction_hybrid_2 = 100 * (crossings_orig - hybrid_2_crossings) / crossings_orig if crossings_orig else 0
         reductions[f"hybrid_2_cutoff_{cutoff}"].append(percent_reduction_hybrid_2)
 
-# === Plot results ===
+# === Boxplot version of results ===
 plt.figure(figsize=(14, 6))
-labels = []
-means = []
 
-for key, values in reductions.items():
-    labels.append(key)
-    means.append(np.mean(values))
+# Prepare data and labels
+data = [values for values in reductions.values()]
+labels = [key for key in reductions.keys()]
 
-plt.bar(labels, means, color='skyblue')
-plt.ylabel("Average % Crossing Reduction")
+# Create boxplot
+plt.boxplot(data, labels=labels, patch_artist=True,
+            boxprops=dict(facecolor='lightblue', color='blue'),
+            medianprops=dict(color='red'),
+            whiskerprops=dict(color='gray'),
+            capprops=dict(color='gray'),
+            flierprops=dict(markerfacecolor='orange', marker='o', markersize=5, linestyle='none'))
+
+plt.ylabel("Crossing Reduction (%)")
 plt.xlabel("Heuristic Type")
-plt.title(f"Average % Crossing Reduction of Heuristics over {num_samples} Samples")
+plt.title(f"Distribution of % Crossing Reduction Across {num_samples} Samples")
 plt.xticks(rotation=45, ha='right')
+plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.tight_layout()
-plt.grid(axis='y')
-# plt.show()
 
-plot_filename = "crossing_reduction_plot.png"
-plt.savefig(plot_filename, dpi=300)  # high-res PNG
-print(f"Plot saved as '{plot_filename}'.")
+# Save the boxplot
+boxplot_filename = "crossing_reduction_boxplot.png"
+plt.savefig(boxplot_filename, dpi=300)
+print(f"Boxplot saved as '{boxplot_filename}'.")
 
+
+#== CSV 
 with open("crossing_reductions.json", "w") as f:
     json.dump(reductions, f, indent=4)
 
