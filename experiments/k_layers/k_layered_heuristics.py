@@ -179,35 +179,42 @@ def hybrid_2(layers, edges: list[list], l_cutoff) -> list[list]:
     #### sifting sweep up down
     min_crossings = total_crossing_count_k_layer(layers, edges)
     current_crossings = float('inf')
+    best_layer_struct = copy.deepcopy(listify_layers)
+    current_crossings = float('inf')
+    current_layer_struct = [] # copy of the original 
     
     if l_cutoff !=0:
         while (forgiveness_number != 0):
             # determine what a sweep is, and refactor this at the soonest
             # down sweep
+            current_layer_struct = copy.deepcopy(best_layer_struct)
             for i in range(1, l_cutoff + 1): # [1, l_cutoff] is the real range
                 # i are the indices of the free_layers in the downward sweep
-                reordered_layer = sifting(listify_layers[i], listify_layers[i - 1], layerfy_edges[i])
-                listify_layers[i] = reordered_layer
+                reordered_layer = sifting(current_layer_struct[i], current_layer_struct[i - 1], layerfy_edges[i])
+                current_layer_struct[i] = reordered_layer
                 
-            current_crossings = total_crossing_count_k_layer(listify_layers, edges)
+            current_crossings = total_crossing_count_k_layer(current_layer_struct, edges)
             
             if current_crossings < min_crossings:
                 min_crossings = current_crossings ### DO WE IMPLEMENT THE SAVING OF THE DATA STRUCTURE
+                best_layer_struct = copy.deepcopy(current_layer_struct)
             else: # current >= min # did not improve or worse.
                 forgiveness_number -= 1
                 
             if forgiveness_number == 0: break
             
             # up sweep
+            current_layer_struct = copy.deepcopy(best_layer_struct)
             for j in range(l_cutoff - 1, -1, -1): # [l_cutoff - 1, 0] is the real range
                 # j should be the indices of the 'top_layer' that is the free_layer in upward sweep
-                reordered_layer = sifting(listify_layers[j], listify_layers[j + 1], layerfy_edges[j+1], 'upward')
-                listify_layers[j] = reordered_layer
+                reordered_layer = sifting(current_layer_struct[j], current_layer_struct[j + 1], layerfy_edges[j+1], 'upward')
+                current_layer_struct[j] = reordered_layer
             
-            current_crossings = total_crossing_count_k_layer(listify_layers, edges)
+            current_crossings = total_crossing_count_k_layer(current_layer_struct, edges)
             
             if current_crossings < min_crossings:
                 min_crossings = current_crossings   ### DO WE IMPLEMENT THE SAVING OF THE DATA STRUCTURE
+                best_layer_struct = copy.deepcopy(current_layer_struct)
             else: # current >= min # did not improve or worse.
                 forgiveness_number -= 1
                 
@@ -217,11 +224,11 @@ def hybrid_2(layers, edges: list[list], l_cutoff) -> list[list]:
     if l_cutoff != (len(layers) - 1):
         for layer_idx in range(l_cutoff + 1, len(layers)):
             #l_cutoff+1 because we want all the 'lower' layers, len(edges) because max_idx+1=len(deges)
-            formatted_edges = parse_edges(edges, listify_layers[layer_idx - 1], listify_layers[layer_idx])
-            baryed_free_layer = barycenter(listify_layers[layer_idx], listify_layers[layer_idx - 1], formatted_edges)
-            listify_layers[layer_idx] = baryed_free_layer
+            formatted_edges = parse_edges(edges, best_layer_struct[layer_idx - 1], best_layer_struct[layer_idx])
+            baryed_free_layer = barycenter(best_layer_struct[layer_idx], best_layer_struct[layer_idx - 1], formatted_edges)
+            best_layer_struct[layer_idx] = baryed_free_layer
         
-    return listify_layers
+    return best_layer_struct
 
 
     # update pos after all rearrangements has been made, for the sake of the graph visualizer
