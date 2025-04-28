@@ -117,7 +117,6 @@ def hybrid_1_permu_bary(layers, edges)->list[list]:
         if forgiveness_number == 0: break
         
     return best_layer_struct
-
 #  removed threshold_size to apply permutation to all layers
 def permu_multi_sweep(layers, edges) -> list[list]:
     """
@@ -337,8 +336,6 @@ def hybrid_1_permu_bary_single_sweep(layers, edges)->list[list]:
         
     return best_layer_struct
 
-
-
 def hybrid_2(layers, edges: list[list], l_cutoff) -> list[list]:
     """
     Hybrid_2 k_layer heuristics: Sifting layer-by-layer sweep will be implemented
@@ -454,7 +451,11 @@ def hybrid_2(layers, edges: list[list], l_cutoff) -> list[list]:
     
     ##### 
     
-    
+def hybrid_exp7(layers, edges: list[list], l_cutoff) -> list[list]:
+    if (0 <= l_cutoff <= (len(layers) - 1)) is False:
+        print(f"Invalid l_cutoff value, it must be from 1 to {len(layers) - 1}")
+        exit(0)
+    pass   
 
 if __name__ == "__main__":
     k = 10
