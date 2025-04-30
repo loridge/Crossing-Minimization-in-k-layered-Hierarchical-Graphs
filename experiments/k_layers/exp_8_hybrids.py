@@ -35,7 +35,6 @@ from k_layer_crossing import (
     total_crossing_count_k_layer,
 )
 
-snapshots = []
 
 class Exp8Utility:
     @staticmethod
@@ -72,7 +71,7 @@ class Exp8Utility:
         }
 
 class BaseCutoffHybrid:
-    """_summary_
+    """Base class for the other algorithms
     
         Args:
             layers (_type_): layers
@@ -80,6 +79,7 @@ class BaseCutoffHybrid:
             l_cutoff (__int__): cutoff value
             parsed_layer_edge_data: output of Exp8Utility.parse_layers_edges()
             comment_out: 0 for no, 1 for yes; comment outs the best_layer_struct deepcopy in the previous implementation
+            capture: 0 for no, 1 for yes; indicates whether every layer-by-layer manipulation is captured for animation purposes.
         Returns:
             dict: _description_
     """
@@ -90,6 +90,7 @@ class BaseCutoffHybrid:
         l_cutoff: int, 
         parsed_layer_edge_data: Dict,
         comment_out = 1,
+        capture = 0, # default is do not capture snapshots
     ):
         
         if (0 <= l_cutoff <= (len(layers) - 1)) is False:
@@ -98,15 +99,15 @@ class BaseCutoffHybrid:
         self.layers = layers
         self.edges = edges 
         self.l_cutoff = l_cutoff
+        self.listify_layers = parsed_layer_edge_data['listify_layers']
+        self.layerfy_edges = parsed_layer_edge_data['layerfy_edges']
+        self.comment_out = comment_out # ito kasi ata dapat na correct behavior? na dapat hindi nagssave every after sweep 
+        self.capture = capture
+        
         self.forgiveness_number = 20
         self.k = len(layers)
         
-        self.listify_layers = parsed_layer_edge_data['listify_layers']
-        self.layerfy_edges = parsed_layer_edge_data['layerfy_edges']
-    
         self.snapshots = [] # for the animation, note: comment out the snapshots.append below if going to proceed with experimentation.
-        
-        self.comment_out = comment_out # ito kasi ata dapat na correct behavior? na dapat hindi nagssave every after sweep 
         
     def reorder_layer(self, free_layer, fixed_layer, edges, phase, direction):
         """Reusable reorder function for code cleanliness.
@@ -132,8 +133,9 @@ class BaseCutoffHybrid:
         current_crossings = float('inf')
         current_layer_struct = [] # copy of the original 
         
-        snapshots.append((copy.deepcopy(current_layer_struct), 0))
+        if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), 0))
         if self.comment_out == 1: current_layer_struct = copy.deepcopy(best_layer_struct)
+        
         if self.l_cutoff != 0:
             while self.forgiveness_number != 0:
                 #### Downward Sweep
@@ -142,10 +144,10 @@ class BaseCutoffHybrid:
                 # print(f"Pre-cutoff free range down: {1, self.l_cutoff}")
                 for i in range(1, self.l_cutoff + 1): # [1, l_cutoff] is the real range
                     # i are the indices of the free_layers in the downward sweep
-                    self.snapshots.append((copy.deepcopy(current_layer_struct), -22)) 
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), -22)) 
                     reordered_layer = self.reorder_layer(current_layer_struct[i], current_layer_struct[i - 1], self.layerfy_edges[i], phase='pre-cutoff', direction='downward')
                     current_layer_struct[i] = reordered_layer
-                    self.snapshots.append((copy.deepcopy(current_layer_struct), i))  # if permuted layer index is i
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), i))  # if permuted layer index is i
 
                 ### Downward sweep checker
                 current_crossings = total_crossing_count_k_layer(current_layer_struct, self.edges)
@@ -164,10 +166,10 @@ class BaseCutoffHybrid:
                 # print(f"Pre-cutoff free range up: {self.l_cutoff - 1, 0}")
                 for j in range(self.l_cutoff - 1, -1, -1): # [l_cutoff - 1, 0] is the real range
                     # j should be the indices of the 'top_layer' that is the free_layer in upward sweep
-                    self.snapshots.append((copy.deepcopy(current_layer_struct), -22)) 
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), -22)) 
                     reordered_layer = self.reorder_layer(current_layer_struct[j], current_layer_struct[j + 1], self.layerfy_edges[j + 1], phase='pre-cutoff', direction='upward')
                     current_layer_struct[j] = reordered_layer
-                    self.snapshots.append((copy.deepcopy(current_layer_struct), j))  # if permuted layer index is j
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), j))  # if permuted layer index is j
 
                 ### Upward sweep checker
                 current_crossings = total_crossing_count_k_layer(current_layer_struct, self.edges)
@@ -190,10 +192,10 @@ class BaseCutoffHybrid:
                 # print(f"Post-cutoff free range down: {self.l_cutoff + 1, self.k - 1}")
                 for i in range(self.l_cutoff + 1, self.k): # [l_cutoff + 1, k - 1] is the real range
                     # i are the indices of the free_layers in the downward sweep
-                    self.snapshots.append((copy.deepcopy(current_layer_struct), -22)) 
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), -22)) 
                     reordered_layer = self.reorder_layer(current_layer_struct[i], current_layer_struct[i - 1], self.layerfy_edges[i], phase='post-cutoff', direction='downward')
                     current_layer_struct[i] = reordered_layer
-                    self.snapshots.append((copy.deepcopy(current_layer_struct), i))  # if permuted layer index is i
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), i))  # if permuted layer index is i
 
             
                 ### Downward sweep checker
@@ -214,11 +216,11 @@ class BaseCutoffHybrid:
                 for j in range(self.k - 2, self.l_cutoff - 1, -1): # [k - 2, l_cutoff] is the real range ng free # manipulated yung l_cutoff
                 # for j in range(self.k - 2, self.l_cutoff+1, -1): # [k - 2, l_cutoff + 2] is the real range # unmanipulated yung l_cutoff
                     # j should be the indices of the 'top_layer' that is the free_layer in upward sweep
-                    self.snapshots.append((copy.deepcopy(current_layer_struct), -22)) 
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), -22)) 
                     reordered_layer = self.reorder_layer(current_layer_struct[j], current_layer_struct[j + 1], self.layerfy_edges[j + 1], phase='post-cutoff', direction='upward')
                     # print(f"free {j}, fixed {j+1}")
                     current_layer_struct[j] = reordered_layer
-                    self.snapshots.append((copy.deepcopy(current_layer_struct), j))  # if permuted layer index is j
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), j))  # if permuted layer index is j
 
                 ### Upward sweep checker
                 current_crossings = total_crossing_count_k_layer(current_layer_struct, self.edges)
@@ -329,15 +331,8 @@ class BaseCutoffHybrid:
         print(f"Animation saved to {output_filename}")
     
 class BarySiftingCutoffHybrid(BaseCutoffHybrid):
-    def __init__(
-        self, 
-        layers: List, 
-        edges: List[List] , 
-        l_cutoff: int, 
-        parsed_layer_edge_data: Dict,
-        comment_out = 1
-    ):
-        super().__init__(layers, edges, l_cutoff, parsed_layer_edge_data, comment_out) 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
       
     def reorder_layer(self, free_layer, fixed_layer, edges, phase, direction):
         if phase == 'pre-cutoff':
@@ -349,15 +344,8 @@ class BarySiftingCutoffHybrid(BaseCutoffHybrid):
             raise ValueError("Invalid phase argument.")
         
 class PermuSiftingCutoffHybrid(BaseCutoffHybrid):
-    def __init__(
-        self, 
-        layers: List, 
-        edges: List[List] , 
-        l_cutoff: int, 
-        parsed_layer_edge_data: Dict,
-        comment_out = 1
-    ):
-        super().__init__(layers, edges, l_cutoff, parsed_layer_edge_data, comment_out)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
       
     def reorder_layer(self, free_layer, fixed_layer, edges, phase, direction):
         if phase == 'pre-cutoff':
@@ -369,15 +357,8 @@ class PermuSiftingCutoffHybrid(BaseCutoffHybrid):
             raise ValueError("Invalid phase argument.")
     
 class PermuBaryCutoffHybrid(BaseCutoffHybrid):
-    def __init__(
-        self, 
-        layers: List, 
-        edges: List[List] , 
-        l_cutoff: int, 
-        parsed_layer_edge_data: Dict,
-        comment_out = 1
-    ):
-        super().__init__(layers, edges, l_cutoff, parsed_layer_edge_data, comment_out)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
       
     def reorder_layer(self, free_layer, fixed_layer, edges, phase, direction):
         if phase == 'pre-cutoff':
@@ -390,15 +371,8 @@ class PermuBaryCutoffHybrid(BaseCutoffHybrid):
             raise ValueError("Invalid phase argument.")
     
 class SiftingBaryCutoffHybrid(BaseCutoffHybrid):
-    def __init__(
-        self, 
-        layers: List, 
-        edges: List[List] , 
-        l_cutoff: int, 
-        parsed_layer_edge_data: Dict,
-        comment_out = 1,
-    ):
-        super().__init__(layers, edges, l_cutoff, parsed_layer_edge_data, comment_out)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
       
     def reorder_layer(self, free_layer, fixed_layer, edges, phase, direction):
         if phase == 'pre-cutoff':
@@ -421,7 +395,7 @@ if __name__ == "__main__":
     parsed_data = Exp8Utility.parse_layers_edges(layers, edges)
     
     #uncommented barysift
-    bary_sift = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=0)
+    bary_sift = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=0, capture = 1)
     barysift_reordered = bary_sift.execute()
     barysift_reordered_count = total_crossing_count_k_layer(barysift_reordered, edges)
     print(f"Uncommented BarycenterSifting {barysift_reordered_count}")
@@ -454,4 +428,4 @@ if __name__ == "__main__":
     ########## ANIMATION 
     ### may bug, the cut-off layer just oscillates kapag post-cutoff phase na
     ### new update, added the comment_out for this
-    # bary_sift.animate_snapshots() # for observing the behavior
+    bary_sift.animate_snapshots() # for observing the behavior
