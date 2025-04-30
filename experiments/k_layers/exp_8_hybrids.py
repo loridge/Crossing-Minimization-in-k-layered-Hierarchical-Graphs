@@ -35,41 +35,6 @@ from k_layer_crossing import (
     total_crossing_count_k_layer,
 )
 
-
-class Exp8Utility:
-    @staticmethod
-    def parse_layers_edges(layers, edges):
-        """Preprocessing step for the data. Utility public method.
-        Args:
-            layers (_type_): _description_
-            edges (_type_): _description_
-
-        Returns:
-            dict: _description_
-        """
-        k = len(layers)
-        listify_layers = [list(i) for i in layers]
-        map_idx_to_layer= {index: sublist for index, sublist in enumerate(listify_layers)}
-        map_node_to_layer = {node: index_i for index_i, sublist in map_idx_to_layer.items() for _, node in enumerate(sublist)}
-        
-        # the dict indices will be layers 1 to n-1
-        layerfy_edges={i:[] for i in range(1, k)}  # O(1) access 3:[nodes list], para hindi na lagi mag O(n) search for an edge
-        
-        for edge_obj in edges:
-            u, v = edge_obj['nodes'] # uX, uY
-            # i want to check it in the listify layer
-            u_id = int(u[1:])  # Remove 'u' and convert to integer
-            v_id = int(v[1:])
-            # u and v cannot be in the same layer. hence we may check only the larger of the two nodes; corresponds to our definition of layerfy
-            greater_id = u_id if u_id > v_id else v_id # guaranted that the nodes are from 1 to n-1 where n is len of layer list
-            
-            layerfy_edges[map_node_to_layer[greater_id]].append(edge_obj)
-    
-        return {
-            'listify_layers':  listify_layers, 
-            'layerfy_edges': layerfy_edges
-        }
-
 class BaseCutoffHybrid:
     """Base class for the other algorithms
     
@@ -120,6 +85,39 @@ class BaseCutoffHybrid:
             direction (_type_): upward or downward
         """
         pass
+    
+    @staticmethod # kasi dapat icacall lang sya once para di masyado expensive, kaya static method
+    def parse_layers_edges(layers, edges):
+        """Preprocessing step for the data. Utility public method.
+        Args:
+            layers (_type_): _description_
+            edges (_type_): _description_
+
+        Returns:
+            dict: _description_
+        """
+        k = len(layers)
+        listify_layers = [list(i) for i in layers]
+        map_idx_to_layer= {index: sublist for index, sublist in enumerate(listify_layers)}
+        map_node_to_layer = {node: index_i for index_i, sublist in map_idx_to_layer.items() for _, node in enumerate(sublist)}
+        
+        # the dict indices will be layers 1 to n-1
+        layerfy_edges={i:[] for i in range(1, k)}  # O(1) access 3:[nodes list], para hindi na lagi mag O(n) search for an edge
+        
+        for edge_obj in edges:
+            u, v = edge_obj['nodes'] # uX, uY
+            # i want to check it in the listify layer
+            u_id = int(u[1:])  # Remove 'u' and convert to integer
+            v_id = int(v[1:])
+            # u and v cannot be in the same layer. hence we may check only the larger of the two nodes; corresponds to our definition of layerfy
+            greater_id = u_id if u_id > v_id else v_id # guaranted that the nodes are from 1 to n-1 where n is len of layer list
+            
+            layerfy_edges[map_node_to_layer[greater_id]].append(edge_obj)
+    
+        return {
+            'listify_layers':  listify_layers, 
+            'layerfy_edges': layerfy_edges
+    }
     
     def execute(self) -> List[List]:
         """For the user, just comment out the snapshot append when you are going to proceed with the experiment.
@@ -256,7 +254,7 @@ class BaseCutoffHybrid:
                 for x, node in enumerate(layer):
                     G.add_node(node)
                     pos[node] = (x, -y)
-                    node_colors[node] = "red" if y == permuted_idx else "lightblue"
+                    node_colors[node] = "orange" if y == permuted_idx else "lightblue"
 
             for edge in self.edges:
                 u, v = edge['nodes']
@@ -392,7 +390,7 @@ if __name__ == "__main__":
     x = total_crossing_count_k_layer(layers, edges)
     print("Original graph " + str(x))
     
-    parsed_data = Exp8Utility.parse_layers_edges(layers, edges)
+    parsed_data = BaseCutoffHybrid.parse_layers_edges(layers, edges)
     
     #uncommented barysift
     bary_sift = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=0, capture = 1)
@@ -401,7 +399,7 @@ if __name__ == "__main__":
     print(f"Uncommented BarycenterSifting {barysift_reordered_count}")
     
     #commented barysift
-    bary_sifter = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1)
+    bary_sifter = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1, capture = 1)
     barysift_reordereder = bary_sifter.execute()
     barysift_reordered_counter = total_crossing_count_k_layer(barysift_reordereder, edges)
     print(f"BarycenterSifting {barysift_reordered_counter}")
@@ -421,11 +419,12 @@ if __name__ == "__main__":
     permubary_reordered_counter = total_crossing_count_k_layer(permubary_reorderer, edges)
     print(f"Permubary {permubary_reordered_counter}")
     
-    purepermu = PermuBaryCutoffHybrid(layers, edges, l_cutoff=k-1, parsed_layer_edge_data=parsed_data, comment_out=1)
+    purepermu = PermuBaryCutoffHybrid(layers, edges, l_cutoff=k-1, parsed_layer_edge_data=parsed_data, comment_out=1, capture=1)
     purepermu_reorderer = purepermu.execute()
     purepermu_reordered_counter = total_crossing_count_k_layer(purepermu_reorderer, edges)
     print(f"Pure Permu {purepermu_reordered_counter}")
     ########## ANIMATION 
     ### may bug, the cut-off layer just oscillates kapag post-cutoff phase na
     ### new update, added the comment_out for this
-    bary_sift.animate_snapshots() # for observing the behavior
+    # bary_sift.animate_snapshots() # for observing the behavior
+    purepermu.animate_snapshots(0.1)
