@@ -232,7 +232,28 @@ class BaseCutoffHybrid:
                 if self.forgiveness_number == 0: break
             
         return best_layer_struct
-    
+    def execute_onesweep(self) -> List[List]:
+        """For testing
+
+        Returns:
+            List[List]: _description_
+        """
+        
+        best_layer_struct = copy.deepcopy(self.listify_layers)
+        current_layer_struct = [] # copy of the original 
+        
+        if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), 0))
+        if self.comment_out == 1: current_layer_struct = copy.deepcopy(best_layer_struct)
+        
+        for i in range(1, self.k):
+            if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), -22)) 
+            reordered_layer = self.reorder_layer(current_layer_struct[i], current_layer_struct[i - 1], self.layerfy_edges[i], phase='pre-cutoff', direction='downward')
+            current_layer_struct[i] = reordered_layer
+            if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), i))  # if permuted layer index is i
+        
+        best_layer_struct = copy.deepcopy(current_layer_struct)
+        
+        return best_layer_struct
     def animate_snapshots(self, delay=0.5):
         """
         Animates snapshots of layer states with highlighted permuted layer.
@@ -393,13 +414,13 @@ if __name__ == "__main__":
     parsed_data = BaseCutoffHybrid.parse_layers_edges(layers, edges)
     
     #uncommented barysift
-    bary_sift = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=0, capture = 1)
+    bary_sift = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=0, capture = 0)
     barysift_reordered = bary_sift.execute()
     barysift_reordered_count = total_crossing_count_k_layer(barysift_reordered, edges)
     print(f"Uncommented BarycenterSifting {barysift_reordered_count}")
     
     #commented barysift
-    bary_sifter = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1, capture = 1)
+    bary_sifter = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1, capture = 0)
     barysift_reordereder = bary_sifter.execute()
     barysift_reordered_counter = total_crossing_count_k_layer(barysift_reordereder, edges)
     print(f"BarycenterSifting {barysift_reordered_counter}")
@@ -419,12 +440,17 @@ if __name__ == "__main__":
     permubary_reordered_counter = total_crossing_count_k_layer(permubary_reorderer, edges)
     print(f"Permubary {permubary_reordered_counter}")
     
-    purepermu = PermuBaryCutoffHybrid(layers, edges, l_cutoff=k-1, parsed_layer_edge_data=parsed_data, comment_out=1, capture=1)
+    purepermu = PermuBaryCutoffHybrid(layers, edges, l_cutoff=k-1, parsed_layer_edge_data=parsed_data, comment_out=1, capture=0)
     purepermu_reorderer = purepermu.execute()
     purepermu_reordered_counter = total_crossing_count_k_layer(purepermu_reorderer, edges)
     print(f"Pure Permu {purepermu_reordered_counter}")
+    
+    purepermuonesweep = PermuBaryCutoffHybrid(layers, edges, l_cutoff=k-1, parsed_layer_edge_data=parsed_data, comment_out=1, capture=1)
+    purepermuonesweep_reorder = purepermuonesweep.execute_onesweep()
+    purepermuonesweep_counter = total_crossing_count_k_layer(purepermuonesweep_reorder, edges)
+    print(f"One pass pure permu {purepermu_reordered_counter}")
     ########## ANIMATION 
     ### may bug, the cut-off layer just oscillates kapag post-cutoff phase na
     ### new update, added the comment_out for this
     # bary_sift.animate_snapshots() # for observing the behavior
-    purepermu.animate_snapshots(0.1)
+    purepermuonesweep.animate_snapshots(0.1)
