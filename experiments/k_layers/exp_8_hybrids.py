@@ -42,9 +42,9 @@ class BaseCutoffHybrid:
             layers (_type_): layers
             edges (_type_): edges object
             l_cutoff (__int__): cutoff value
-            parsed_layer_edge_data: output of Exp8Utility.parse_layers_edges()
-            comment_out: 0 for no, 1 for yes; comment outs the best_layer_struct deepcopy in the previous implementation
-            capture: 0 for no, 1 for yes; indicates whether every layer-by-layer manipulation is captured for animation purposes.
+            parsed_layer_edge_data: output of static method parse_layers_edges()
+            comment_out: 0 for no, 1 for yes; comment outs the best_layer_struct deepcopy in the previous implementation. Default is Yes (new imple)
+            capture: 0 for no, 1 for yes; indicates whether every layer-by-layer manipulation is captured for animation purposes. Default is No.
         Returns:
             dict: _description_
     """
@@ -120,7 +120,7 @@ class BaseCutoffHybrid:
     }
     
     def execute(self) -> List[List]:
-        """For the user, just comment out the snapshot append when you are going to proceed with the experiment.
+        """For the user, just comment out the snapshot append when you are going to proceed with the experiment. Executes the layer-by-layer sweep algorithm.
 
         Returns:
             List[List]: _description_
@@ -296,58 +296,46 @@ class BaseCutoffHybrid:
 
         plt.show()
     
-    def animate_snapshots_to_video(self, output_filename="animation.mp4", fps=1):
-        """
-        Exports animated graph snapshots to a video file.
-        
-        Args:
-            snapshots (List[Tuple[List[List[str]], int]]): Snapshots of layer states and permuted index.
-            edges (List[Dict]): Edge list with 'nodes' keys.
-            output_filename (str): Output video filename (.mp4).
-            fps (int): Frames per second (lower = slower animation).
-        """
+    def create_animation(self, filename="animation.mp4", delay=500):
         fig, ax = plt.subplots(figsize=(10, 6))
-        G = nx.Graph()
-
+        
         def update(frame_idx):
             ax.clear()
             layer_snapshot, permuted_idx = self.snapshots[frame_idx]
-            G.clear()
+            G = nx.Graph()
             pos = {}
             node_colors = {}
 
             formatted_layers = [[f"u{n}" if not isinstance(n, str) else n for n in layer] for layer in layer_snapshot]
-
+            
             for y, layer in enumerate(formatted_layers):
                 for x, node in enumerate(layer):
                     G.add_node(node)
                     pos[node] = (x, -y)
-                    node_colors[node] = "red" if y == permuted_idx else "lightblue"
+                    node_colors[node] = "orange" if y == permuted_idx else "lightblue"
 
             for edge in self.edges:
-                u, v = edge["nodes"]
+                u, v = edge['nodes']
                 if u in G and v in G:
                     G.add_edge(u, v)
 
             nx.draw(
-                G, pos,
-                ax=ax,
+                G, pos, ax=ax,
                 with_labels=True,
                 node_size=500,
                 node_color=[node_colors[n] for n in G.nodes()],
                 edge_color="gray",
                 font_weight="bold",
-                font_size=8,
+                font_size=8
             )
             ax.set_title(f"Step {frame_idx + 1} (Layer {permuted_idx} permuted)")
-            ax.set_axis_off()
 
-        ani = FuncAnimation(fig, update, frames=len(self.snapshots), repeat=False)
+        ani = FuncAnimation(fig, update, frames=len(self.snapshots), interval=delay)
 
-        # Save to MP4 (requires ffmpeg)
-        writer = FFMpegWriter(fps=fps, bitrate=800)  # Lower bitrate = smaller file
-        ani.save(output_filename, writer=writer)
-        print(f"Animation saved to {output_filename}")
+        # Save to MP4 using FFMpeg
+        writer = FFMpegWriter(fps=1000 // delay)
+        ani.save(filename, writer=writer)
+        print(f"Saved animation to {filename}")
     
 class BarySiftingCutoffHybrid(BaseCutoffHybrid):
     def __init__(self, *args, **kwargs):
@@ -414,43 +402,45 @@ if __name__ == "__main__":
     parsed_data = BaseCutoffHybrid.parse_layers_edges(layers, edges)
     
     #uncommented barysift
-    bary_sift = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=0, capture = 0)
+    bary_sift = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=0, capture = 1)
     barysift_reordered = bary_sift.execute()
     barysift_reordered_count = total_crossing_count_k_layer(barysift_reordered, edges)
     print(f"Uncommented BarycenterSifting {barysift_reordered_count}")
     
     #commented barysift
-    bary_sifter = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1, capture = 0)
+    bary_sifter = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1, capture = 1)
     barysift_reordereder = bary_sifter.execute()
     barysift_reordered_counter = total_crossing_count_k_layer(barysift_reordereder, edges)
     print(f"BarycenterSifting {barysift_reordered_counter}")
 
-    siftbary = SiftingBaryCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1)
-    siftbary_reorder = siftbary.execute()
-    siftbary_reorder_counter = total_crossing_count_k_layer(siftbary_reorder, edges)
-    print(f"SiftBary {siftbary_reorder_counter}")
+    # siftbary = SiftingBaryCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1)
+    # siftbary_reorder = siftbary.execute()
+    # siftbary_reorder_counter = total_crossing_count_k_layer(siftbary_reorder, edges)
+    # print(f"SiftBary {siftbary_reorder_counter}")
     
-    permusifting = PermuSiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1)
-    permusifting_reorderer = permusifting.execute()
-    permusifting_reordered_counter = total_crossing_count_k_layer(permusifting_reorderer, edges)
-    print(f"Permusifting {permusifting_reordered_counter}")
+    # permusifting = PermuSiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1)
+    # permusifting_reorderer = permusifting.execute()
+    # permusifting_reordered_counter = total_crossing_count_k_layer(permusifting_reorderer, edges)
+    # print(f"Permusifting {permusifting_reordered_counter}")
     
-    permubary = PermuBaryCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1)
-    permubary_reorderer = permubary.execute()
-    permubary_reordered_counter = total_crossing_count_k_layer(permubary_reorderer, edges)
-    print(f"Permubary {permubary_reordered_counter}")
+    # permubary = PermuBaryCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1)
+    # permubary_reorderer = permubary.execute()
+    # permubary_reordered_counter = total_crossing_count_k_layer(permubary_reorderer, edges)
+    # print(f"Permubary {permubary_reordered_counter}")
     
-    purepermu = PermuBaryCutoffHybrid(layers, edges, l_cutoff=k-1, parsed_layer_edge_data=parsed_data, comment_out=1, capture=0)
-    purepermu_reorderer = purepermu.execute()
-    purepermu_reordered_counter = total_crossing_count_k_layer(purepermu_reorderer, edges)
-    print(f"Pure Permu {purepermu_reordered_counter}")
+    # purepermu = PermuBaryCutoffHybrid(layers, edges, l_cutoff=k-1, parsed_layer_edge_data=parsed_data, comment_out=1, capture=0)
+    # purepermu_reorderer = purepermu.execute()
+    # purepermu_reordered_counter = total_crossing_count_k_layer(purepermu_reorderer, edges)
+    # print(f"Pure Permu {purepermu_reordered_counter}")
     
-    purepermuonesweep = PermuBaryCutoffHybrid(layers, edges, l_cutoff=k-1, parsed_layer_edge_data=parsed_data, comment_out=1, capture=1)
-    purepermuonesweep_reorder = purepermuonesweep.execute_onesweep()
-    purepermuonesweep_counter = total_crossing_count_k_layer(purepermuonesweep_reorder, edges)
-    print(f"One pass pure permu {purepermu_reordered_counter}")
+    # purepermuonesweep = PermuBaryCutoffHybrid(layers, edges, l_cutoff=k-1, parsed_layer_edge_data=parsed_data, comment_out=1, capture=0)
+    # purepermuonesweep_reorder = purepermuonesweep.execute_onesweep()
+    # purepermuonesweep_counter = total_crossing_count_k_layer(purepermuonesweep_reorder, edges)
+    # print(f"One pass pure permu {purepermu_reordered_counter}")
     ########## ANIMATION 
     ### may bug, the cut-off layer just oscillates kapag post-cutoff phase na
     ### new update, added the comment_out for this
     # bary_sift.animate_snapshots() # for observing the behavior
-    purepermuonesweep.animate_snapshots(0.1)
+    # bary_sifter.animate_snapshots(0.1)
+    bary_sift.create_animation(filename='barysift_old_imple.mp4')
+    bary_sifter.create_animation(filename='barysift_new_imple.mp4')
