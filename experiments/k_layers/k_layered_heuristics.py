@@ -71,9 +71,10 @@ def hybrid_1_permu_bary(layers, edges)->list[list]:
     current_crossings = float('inf')
     current_layer_struct = [] # copy of the original 
         
+    current_layer_struct = copy.deepcopy(best_layer_struct)
     while (forgiveness_number != 0):
         # down sweep
-        current_layer_struct = copy.deepcopy(best_layer_struct)
+        # current_layer_struct = copy.deepcopy(best_layer_struct)
         for i in range(1, len(layers)-1): # [1, l_cutoff] is the real range
             # i are the indices of the free_layers in the downward sweep
             # print(f"At iter {i}, the bottom_nodes are {listify_layers[i]}")
@@ -96,7 +97,7 @@ def hybrid_1_permu_bary(layers, edges)->list[list]:
         if forgiveness_number == 0: break
         
         # up sweep
-        current_layer_struct = copy.deepcopy(best_layer_struct)
+        # current_layer_struct = copy.deepcopy(best_layer_struct)
         for j in range(len(layers)-2, -1, -1): # [l_cutoff - 1, 0] is the real range
             # j should be the indices of the 'top_layer' that is the free_layer in upward sweep
             if len(current_layer_struct[j]) <= threshold_size:
@@ -149,9 +150,10 @@ def permu_multi_sweep(layers, edges) -> list[list]:
     current_crossings = float('inf')
     current_layer_struct = []  # Copy of the original layout
     
+    current_layer_struct = copy.deepcopy(best_layer_struct)
     while forgiveness_number != 0:
         # Downward sweep
-        current_layer_struct = copy.deepcopy(best_layer_struct)
+        # current_layer_struct = copy.deepcopy(best_layer_struct)
         for i in range(1, len(layers) - 1):  # Iterate over layers in downward sweep
             reordered_layer, _ = permutation(current_layer_struct[i - 1], current_layer_struct[i], layerfy_edges[i])
             current_layer_struct[i] = reordered_layer
@@ -167,7 +169,7 @@ def permu_multi_sweep(layers, edges) -> list[list]:
         if forgiveness_number == 0: break
 
         # Upward sweep
-        current_layer_struct = copy.deepcopy(best_layer_struct)
+        # current_layer_struct = copy.deepcopy(best_layer_struct)
         for j in range(len(layers) - 2, -1, -1):  # Iterate over layers in upward sweep
             reordered_layer, _ = permutation(current_layer_struct[j + 1], current_layer_struct[j], layerfy_edges[j + 1])
             current_layer_struct[j] = reordered_layer
@@ -215,9 +217,10 @@ def permu_multi_sweep_patarasuk(layers, edges) -> list[list]:
     current_crossings = float('inf')
     current_layer_struct = []  # Copy of the original layout
     
+    current_layer_struct = copy.deepcopy(best_layer_struct)
     while forgiveness_number != 0:
         # Downward sweep
-        current_layer_struct = copy.deepcopy(best_layer_struct)
+        # current_layer_struct = copy.deepcopy(best_layer_struct)
         for i in range(1, len(layers) - 1):  # Iterate over layers in downward sweep
             reordered_layer, _ = permutation_patarasuk(current_layer_struct[i - 1], current_layer_struct[i], layerfy_edges[i])
             current_layer_struct[i] = reordered_layer
@@ -233,7 +236,7 @@ def permu_multi_sweep_patarasuk(layers, edges) -> list[list]:
         if forgiveness_number == 0: break
 
         # Upward sweep
-        current_layer_struct = copy.deepcopy(best_layer_struct)
+        # current_layer_struct = copy.deepcopy(best_layer_struct)
         for j in range(len(layers) - 2, -1, -1):  # Iterate over layers in upward sweep
             reordered_layer, _ = permutation(current_layer_struct[j + 1], current_layer_struct[j], layerfy_edges[j + 1])
             current_layer_struct[j] = reordered_layer
@@ -289,9 +292,10 @@ def hybrid_1_permu_bary_single_sweep(layers, edges)->list[list]:
     current_crossings = float('inf')
     current_layer_struct = [] # copy of the original 
         
+    current_layer_struct = copy.deepcopy(best_layer_struct)
     while (forgiveness_number != 0):
         # down sweep
-        current_layer_struct = copy.deepcopy(best_layer_struct)
+        # current_layer_struct = copy.deepcopy(best_layer_struct)
         for i in range(1, len(layers)-1): # [1, l_cutoff] is the real range
             # i are the indices of the free_layers in the downward sweep
             # print(f"At iter {i}, the bottom_nodes are {listify_layers[i]}")
@@ -314,7 +318,7 @@ def hybrid_1_permu_bary_single_sweep(layers, edges)->list[list]:
         if forgiveness_number == 0: break
         
         # up sweep
-        current_layer_struct = copy.deepcopy(best_layer_struct)
+        # current_layer_struct = copy.deepcopy(best_layer_struct)
         for j in range(len(layers)-2, -1, -1): # [l_cutoff - 1, 0] is the real range
             # j should be the indices of the 'top_layer' that is the free_layer in upward sweep
             if len(current_layer_struct[j]) <= threshold_size:
@@ -399,11 +403,12 @@ def hybrid_2(layers, edges: list[list], l_cutoff) -> list[list]:
     current_crossings = float('inf')
     current_layer_struct = [] # copy of the original 
     
+    current_layer_struct = copy.deepcopy(best_layer_struct)
     if l_cutoff !=0:
         while (forgiveness_number != 0):
             # determine what a sweep is, and refactor this at the soonest
             # down sweep
-            current_layer_struct = copy.deepcopy(best_layer_struct)
+            # current_layer_struct = copy.deepcopy(best_layer_struct)
             for i in range(1, l_cutoff + 1): # [1, l_cutoff] is the real range
                 # i are the indices of the free_layers in the downward sweep
                 reordered_layer = sifting(current_layer_struct[i], current_layer_struct[i - 1], layerfy_edges[i])
@@ -420,7 +425,7 @@ def hybrid_2(layers, edges: list[list], l_cutoff) -> list[list]:
             if forgiveness_number == 0: break
             
             # up sweep
-            current_layer_struct = copy.deepcopy(best_layer_struct)
+            # current_layer_struct = copy.deepcopy(best_layer_struct)
             for j in range(l_cutoff - 1, -1, -1): # [l_cutoff - 1, 0] is the real range
                 # j should be the indices of the 'top_layer' that is the free_layer in upward sweep
                 reordered_layer = sifting(current_layer_struct[j], current_layer_struct[j + 1], layerfy_edges[j+1], 'upward')

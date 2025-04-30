@@ -58,9 +58,9 @@ for n in n_range:
             end = time.perf_counter()
             new_crossings = total_crossing_count_k_layer(bary_sift_reordered, edges)
             elapsed = end - start
-            timings[f"bary_sift_cutoff_{cutoff}"].append(elapsed)
+            timings[f"{methods[1]}_cutoff_{cutoff}"].append(elapsed)
             reduction = 100 * (crossings_orig - new_crossings) / crossings_orig if crossings_orig else 0
-            reductions[f"{methods[0]}_cutoff_{cutoff}"].append(reduction)
+            reductions[f"{methods[1]}_cutoff_{cutoff}"].append(reduction)
 
 
             permusifting = PermuSiftingCutoffHybrid(layers, edges, l_cutoff=cutoff, parsed_layer_edge_data=parsed_data, comment_out=1)
