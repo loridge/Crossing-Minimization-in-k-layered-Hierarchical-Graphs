@@ -7,7 +7,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import sys, os
 import pprint
-
+import csv
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', ))
 
 if parent_dir not in sys.path:
@@ -22,10 +22,10 @@ from exp_8_hybrids import BaseCutoffHybrid, PermuBaryCutoffHybrid, PermuSiftingC
 # https://www.geeksforgeeks.org/python-unzip-a-list-of-tuples/
 
 # === CONFIG ===
-num_samples = 20
+num_samples = 1
 # num_samples=1
 k = 10
-n_range = [8] # 8 dapat, pero 5 muna para pangtest
+n_range = [4] # 8 dapat, pero 5 muna para pangtest
 methods = ['bary_sift', 'sift_bary', 'permu_sift', 'permu_bary']
 # n_range = range(6, 11)  # n = m
 ##### not yet done
@@ -239,4 +239,33 @@ for n in n_range:
         plt.savefig(f"scatter_{method}.png", dpi=300)
         plt.show()
 
+
+    # === EXPORT TO WIDE-FORMAT CSV ===
+
+    # -- Convert crossings_produced to DataFrame and export
+    crossings_df = pd.DataFrame(crossings_produced)
+    crossings_df.insert(0, "sample_id", crossings_df.index)
+    crossings_df.to_csv("crossings_produced.csv", index=False)
+    print("✅ crossings_produced.csv saved.")
+
+    # -- Convert timings_produced to wide-format DataFrame
+    timing_rows = []
+    num_samples = len(crossings_produced['crossings_orig'])  # assumes all lists have same length
+
+    for i in range(num_samples):
+        row = {"sample_id": i}
+        for key, values in timings_produced.items():
+            if i < len(values) and values[i]:  # check bounds and value
+                row[f"{key}_total"] = values[i][0]
+                row[f"{key}_algo1"] = values[i][1]
+                row[f"{key}_algo2"] = values[i][2]
+            else:
+                row[f"{key}_total"] = None
+                row[f"{key}_algo1"] = None
+                row[f"{key}_algo2"] = None
+        timing_rows.append(row)
+
+    timings_df = pd.DataFrame(timing_rows)
+    timings_df.to_csv("timings_produced.csv", index=False)
+    print("✅ timings_produced.csv saved.")
 print("Experiment 8 Concluded")
