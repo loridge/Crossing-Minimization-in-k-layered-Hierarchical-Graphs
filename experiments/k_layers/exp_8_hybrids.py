@@ -4,9 +4,20 @@ import networkx as nx
 import sys, os
 import time
 import copy
-from typing import (Dict, List,)
+from typing import (
+    Dict, 
+    List, 
+    Tuple
+)
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation, FFMpegWriter
+from matplotlib.animation import (
+    FuncAnimation, 
+    FFMpegWriter
+)
+from abc import (
+    ABC, 
+    abstractmethod
+)
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
@@ -35,7 +46,7 @@ from k_layer_crossing import (
     total_crossing_count_k_layer,
 )
 
-class BaseCutoffHybrid:
+class BaseCutoffHybrid(ABC):
     """Base class for the other algorithms
     
         Args:
@@ -54,7 +65,7 @@ class BaseCutoffHybrid:
         edges: List[List] , 
         l_cutoff: int, 
         parsed_layer_edge_data: Dict,
-        comment_out = 1,
+        comment_out = 1, # ito kasi ata dapat na correct behavior? na dapat hindi nagssave every after sweep 
         capture = 0, # default is do not capture snapshots
     ):
         
@@ -66,23 +77,25 @@ class BaseCutoffHybrid:
         self.l_cutoff = l_cutoff
         self.listify_layers = parsed_layer_edge_data['listify_layers']
         self.layerfy_edges = parsed_layer_edge_data['layerfy_edges']
-        self.comment_out = comment_out # ito kasi ata dapat na correct behavior? na dapat hindi nagssave every after sweep 
+        self.comment_out = comment_out 
         self.capture = capture
         
         self.forgiveness_number = 20
         self.k = len(layers)
         
-        self.snapshots = [] # for the animation, note: comment out the snapshots.append below if going to proceed with experimentation.
+        self.snapshots = [] # for the animation, note: turn off the snapshots.append below if going to proceed with experimentation.
         
+    @abstractmethod
     def reorder_layer(self, free_layer, fixed_layer, edges, phase, direction):
-        """Reusable reorder function for code cleanliness.
-
+        """ Reorder the free layer based on the fixed layer and edge structure.
+        This method must be overridden in any subclass.
+        
         Args:
-            free_layer (_type_): Also the 'bottom nodes.'
-            fixed_layer (_type_): Also the 'upper nodes.'
-            edges (_type_): _description_
-            phase (_str_): Whether the algorithm is in the pre-cutoff or post-cutoff phase.
-            direction (_type_): upward or downward
+            free_layer (List): The layer to be reordered. Also the 'bottom nodes.'
+            fixed_layer (List): The fixed layer used as a reference. Also the 'upper nodes.'
+            edges (List[Dict]): List of edge dictionaries between layers.
+            phase (str): Either 'pre-cutoff' or 'post-cutoff'.
+            direction (str): Direction of traversal. Either 'upward' or 'downward'.
         """
         pass
     
@@ -119,21 +132,26 @@ class BaseCutoffHybrid:
             'layerfy_edges': layerfy_edges
     }
     
-    def execute(self) -> List[List]:
-        """For the user, just comment out the snapshot append when you are going to proceed with the experiment. Executes the layer-by-layer sweep algorithm.
+    def execute(self) -> Tuple[List[List], Tuple]:
+        """Executes the layer-by-layer sweep algorithm.
 
         Returns:
-            List[List]: _description_
+            reordered_ds_and_time_elapsed (_tuple[list[list], tuple]_): Outputs the reordered layer data structure and the time elapsed for every LbL sweep algorithm.
         """
+        # timer_elapsed_bin: List[Tuple] = [] # e.g. (5.74, 8.53) corresponding to (time elapsed for layer-by-layer sifting, TE for LbL barycenter)
+        # mali pala ata to
+        
+        
         min_crossings = total_crossing_count_k_layer(self.layers, self.edges)
         current_crossings = float('inf')
         best_layer_struct = copy.deepcopy(self.listify_layers)
         current_crossings = float('inf')
         current_layer_struct = [] # copy of the original 
         
-        if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), 0))
+        if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), 0, -1))
         if self.comment_out == 1: current_layer_struct = copy.deepcopy(best_layer_struct)
         
+        start_pre_cutoff = time.perf_counter() 
         if self.l_cutoff != 0:
             while self.forgiveness_number != 0:
                 #### Downward Sweep
@@ -142,10 +160,10 @@ class BaseCutoffHybrid:
                 # print(f"Pre-cutoff free range down: {1, self.l_cutoff}")
                 for i in range(1, self.l_cutoff + 1): # [1, l_cutoff] is the real range
                     # i are the indices of the free_layers in the downward sweep
-                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), -22)) 
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), i, -1)) 
                     reordered_layer = self.reorder_layer(current_layer_struct[i], current_layer_struct[i - 1], self.layerfy_edges[i], phase='pre-cutoff', direction='downward')
                     current_layer_struct[i] = reordered_layer
-                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), i))  # if permuted layer index is i
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), i, 1))  # if permuted layer index is i
 
                 ### Downward sweep checker
                 current_crossings = total_crossing_count_k_layer(current_layer_struct, self.edges)
@@ -164,10 +182,10 @@ class BaseCutoffHybrid:
                 # print(f"Pre-cutoff free range up: {self.l_cutoff - 1, 0}")
                 for j in range(self.l_cutoff - 1, -1, -1): # [l_cutoff - 1, 0] is the real range
                     # j should be the indices of the 'top_layer' that is the free_layer in upward sweep
-                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), -22)) 
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), j, -1)) 
                     reordered_layer = self.reorder_layer(current_layer_struct[j], current_layer_struct[j + 1], self.layerfy_edges[j + 1], phase='pre-cutoff', direction='upward')
                     current_layer_struct[j] = reordered_layer
-                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), j))  # if permuted layer index is j
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), j, 1))  # if permuted layer index is j
 
                 ### Upward sweep checker
                 current_crossings = total_crossing_count_k_layer(current_layer_struct, self.edges)
@@ -179,9 +197,13 @@ class BaseCutoffHybrid:
                     self.forgiveness_number -= 1
                     
                 if self.forgiveness_number == 0: break
+        end_pre_cutoff = time.perf_counter()
+        pre_cutoff_elapsed = end_pre_cutoff - start_pre_cutoff
+        
                 
         self.forgiveness_number = 20   # replenish the forgiveness number
         
+        start_post_cutoff = time.perf_counter()
         if self.l_cutoff != (self.k - 1):
             while self.forgiveness_number != 0:
                 #### Downward Sweep
@@ -190,10 +212,10 @@ class BaseCutoffHybrid:
                 # print(f"Post-cutoff free range down: {self.l_cutoff + 1, self.k - 1}")
                 for i in range(self.l_cutoff + 1, self.k): # [l_cutoff + 1, k - 1] is the real range
                     # i are the indices of the free_layers in the downward sweep
-                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), -22)) 
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), i, -1)) 
                     reordered_layer = self.reorder_layer(current_layer_struct[i], current_layer_struct[i - 1], self.layerfy_edges[i], phase='post-cutoff', direction='downward')
                     current_layer_struct[i] = reordered_layer
-                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), i))  # if permuted layer index is i
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), i, 1))  # if permuted layer index is i
 
             
                 ### Downward sweep checker
@@ -214,11 +236,11 @@ class BaseCutoffHybrid:
                 for j in range(self.k - 2, self.l_cutoff - 1, -1): # [k - 2, l_cutoff] is the real range ng free # manipulated yung l_cutoff
                 # for j in range(self.k - 2, self.l_cutoff+1, -1): # [k - 2, l_cutoff + 2] is the real range # unmanipulated yung l_cutoff
                     # j should be the indices of the 'top_layer' that is the free_layer in upward sweep
-                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), -22)) 
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), j, -1)) 
                     reordered_layer = self.reorder_layer(current_layer_struct[j], current_layer_struct[j + 1], self.layerfy_edges[j + 1], phase='post-cutoff', direction='upward')
                     # print(f"free {j}, fixed {j+1}")
                     current_layer_struct[j] = reordered_layer
-                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), j))  # if permuted layer index is j
+                    if self.capture: self.snapshots.append((copy.deepcopy(current_layer_struct), j, 1))  # if permuted layer index is j
 
                 ### Upward sweep checker
                 current_crossings = total_crossing_count_k_layer(current_layer_struct, self.edges)
@@ -230,10 +252,15 @@ class BaseCutoffHybrid:
                     self.forgiveness_number -= 1
                     
                 if self.forgiveness_number == 0: break
-            
-        return best_layer_struct
+        end_post_cutoff = time.perf_counter()
+        post_cutoff_elapsed = end_post_cutoff - start_post_cutoff
+        
+        total_elapsed = end_post_cutoff - start_pre_cutoff
+        
+        return best_layer_struct, (total_elapsed, pre_cutoff_elapsed, post_cutoff_elapsed)
+    
     def execute_onesweep(self) -> List[List]:
-        """For testing
+        """For testing, deprecated, to be updated soon
 
         Returns:
             List[List]: _description_
@@ -298,10 +325,10 @@ class BaseCutoffHybrid:
     
     def create_animation(self, filename="animation.mp4", delay=500):
         fig, ax = plt.subplots(figsize=(10, 6))
-        
+        # print(f"{self.snapshots}")
         def update(frame_idx):
             ax.clear()
-            layer_snapshot, permuted_idx = self.snapshots[frame_idx]
+            layer_snapshot, permuted_idx, indicator_if_being_manipulated = self.snapshots[frame_idx]
             G = nx.Graph()
             pos = {}
             node_colors = {}
@@ -312,7 +339,7 @@ class BaseCutoffHybrid:
                 for x, node in enumerate(layer):
                     G.add_node(node)
                     pos[node] = (x, -y)
-                    node_colors[node] = "orange" if y == permuted_idx else "lightblue"
+                    node_colors[node] = "orange" if y == permuted_idx and indicator_if_being_manipulated == 1 else "lightblue"
 
             for edge in self.edges:
                 u, v = edge['nodes']
@@ -328,8 +355,11 @@ class BaseCutoffHybrid:
                 font_weight="bold",
                 font_size=8
             )
-            ax.set_title(f"Step {frame_idx + 1} (Layer {permuted_idx} permuted)")
-
+            
+            if indicator_if_being_manipulated == 1:
+                ax.set_title(f"Step {frame_idx + 1} (Permuting layer {permuted_idx} )")
+            else: 
+                ax.set_title(f"Step {frame_idx + 1} (To permute layer {permuted_idx} )")
         ani = FuncAnimation(fig, update, frames=len(self.snapshots), interval=delay)
 
         # Save to MP4 using FFMpeg
