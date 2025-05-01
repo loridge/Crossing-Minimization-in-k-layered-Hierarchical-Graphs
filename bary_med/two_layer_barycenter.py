@@ -1,10 +1,23 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+from itertools import permutations
+import os, sys
+import random
 
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+    
+from sifting.sifting_2 import (
+    cross_count_optimized,
+)
+    
 """ 
 - parse_edges - for compatibility with the barycenter and median
 - barycenter
 - median
+- permutation
 """
 
 # Helper function to parse edge format
@@ -136,3 +149,56 @@ def draw_horizontal_bipartite(B, top_nodes, bottom_nodes, title, node_order=None
     )
     plt.title(title, fontsize=14)
     plt.show()
+    
+def permutation_patarasuk(fixed_layer, free_layer, edges):
+    """
+    Find the optimal ordering of the free layer to minimize edge crossings. Randomization for ties. 
+
+    Parameters:
+    - fixed_layer: List of vertices in the fixed layer (fixed order).
+    - free_layer: List of vertices in the free layer.
+    - edges: List of dictionaries with 'nodes' key, each containing a list of two vertices representing an edge.
+
+    Returns:
+    - Optimal ordering of free_layer with minimal crossings.
+    - Minimum number of crossings.
+    """
+    min_crossings = float('inf')
+    optimal_ordering = None
+    # print("Currently has", len(fixed_layer), "vertices",  edges)
+    for perm in permutations(free_layer):
+        current_crossings = cross_count_optimized(fixed_layer, list(perm), edges)
+        if current_crossings < min_crossings:
+            min_crossings = current_crossings
+            optimal_ordering = perm
+        elif current_crossings == min_crossings:
+            # 50% chance to accept the new permutation even if it's a tie
+            if random.random() < 0.5:
+                optimal_ordering = perm
+                
+    return list(optimal_ordering), min_crossings
+
+
+def permutation(fixed_layer, free_layer, edges):
+    """
+    Find the optimal ordering of the free layer to minimize edge crossings.
+
+    Parameters:
+    - fixed_layer: List of vertices in the fixed layer (fixed order).
+    - free_layer: List of vertices in the free layer.
+    - edges: List of dictionaries with 'nodes' key, each containing a list of two vertices representing an edge.
+
+    Returns:
+    - Optimal ordering of free_layer with minimal crossings.
+    - Minimum number of crossings.
+    """
+    min_crossings = float('inf')
+    optimal_ordering = None
+    # print("Currently has", len(fixed_layer), "vertices",  edges)
+    for perm in permutations(free_layer):
+        current_crossings = cross_count_optimized(fixed_layer, list(perm), edges)
+        if current_crossings < min_crossings:
+            min_crossings = current_crossings
+            optimal_ordering = perm
+
+    return list(optimal_ordering), min_crossings

@@ -96,7 +96,7 @@ def sifting_inactivated(free_layer: Union[Set[str], List[str]], fixed_layer: Uni
     return reordered_layer
 
 
-def sifting(bottom_nodes, top_nodes, edges, verbose=0):
+def sifting(free_nodes, fixed_nodes, edges, sweep_type='downward'):
     """
     Reorders bottom nodes using the sifting heuristic based on indegree in decreasing order.
     
@@ -104,44 +104,47 @@ def sifting(bottom_nodes, top_nodes, edges, verbose=0):
     - bottom_nodes: List of bottom-layer nodes.
     - top_nodes: List of top-layer nodes.
     - edges: List of dictionaries representing edges with format {'nodes': ['uX', 'uY']}.
-    
+    - sweep_type[str]: 'downward' if downward sweep, 'upward' if upward sweep. Defaults to downward.
     Returns:
     - Reordered list of bottom-layer nodes as integers.
     """
     
-    top_nodes = [f"u{node}" if isinstance(node, int) else node for node in list(top_nodes) ]
-    bottom_nodes = [f"u{node}" if isinstance(node, int) else node for node in list(bottom_nodes) ]  
+    fixed_nodes = [f"u{node}" if isinstance(node, int) else node for node in list(fixed_nodes) ]
+    free_nodes = [f"u{node}" if isinstance(node, int) else node for node in list(free_nodes) ]  
     
-    # Compute indegree for each bottom node
-    indegree = {node: 0 for node in bottom_nodes}
-    for edge in edges:
-        _, b = edge['nodes']
+    # Compute indegree for each bottom node (sa obcm lang), free layer sya sa k-layer
+    indegree = {node: 0 for node in free_nodes}
+    for edge in edges: ##########################################MAY BUG PAG UPWARD SWEEP
+        if sweep_type == 'downward':
+            _, b = edge['nodes'] # this only works for obcm where there is a clear bottom node
+        elif sweep_type == 'upward':
+            b, _ = edge['nodes']
         indegree[b] += 1
     
     # Sort bottom nodes by indegree in decreasing order (priority queue for processing order)
-    sorted_nodes = sorted(bottom_nodes, key=lambda node: -indegree[node])
+    sorted_nodes = sorted(free_nodes, key=lambda node: -indegree[node])
     
     # Apply the sifting heuristic
     for node in sorted_nodes:
-        best_position = bottom_nodes.index(node)
-        best_crossings = cross_count_optimized(top_nodes, bottom_nodes, edges)
+        best_position = free_nodes.index(node)
+        best_crossings = cross_count_optimized(fixed_nodes, free_nodes, edges)
         
-        for j in range(len(bottom_nodes)):
-            if bottom_nodes[j] == node:
+        for j in range(len(free_nodes)):
+            if free_nodes[j] == node:
                 continue
             
             # Swap node to new position
-            bottom_nodes.remove(node)
-            bottom_nodes.insert(j, node)
-            current_crossings = cross_count_optimized(top_nodes, bottom_nodes, edges)
+            free_nodes.remove(node)
+            free_nodes.insert(j, node)
+            current_crossings = cross_count_optimized(fixed_nodes, free_nodes, edges)
             
             if current_crossings < best_crossings:
                 best_position = j
                 best_crossings = current_crossings
             
             # Revert swap
-            bottom_nodes.remove(node)
-            bottom_nodes.insert(best_position, node)
+            free_nodes.remove(node)
+            free_nodes.insert(best_position, node)
     
     # Extract integer values from node labels
-    return [int(node[1:]) if isinstance(node, str) and node.startswith('u') and node[1:].isdigit() else node for node in bottom_nodes]
+    return [int(node[1:]) if isinstance(node, str) and node.startswith('u') and node[1:].isdigit() else node for node in free_nodes]

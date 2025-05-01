@@ -80,6 +80,15 @@ def binary_search_first_smaller(arr, v, lower_bound, upper_bound, index_referenc
 
 
 def cross_count_optimized(fixed_layer: list[str], free_layer: list[str], edges: list):
+    """Implements the crossing function made by Simon Hol (2024)
+
+    Args:
+        fixed_layer (list[str]): _description_
+        free_layer (list[str]): _description_
+        edges (list): Array of {'nodes':[node1:str, node2:str]} objects
+    Returns:
+        _type_: _description_
+    """
     crossing_total = 0
     
     fixed_layer = [f"u{node}" if isinstance(node, int) else node for node in list(fixed_layer) ]

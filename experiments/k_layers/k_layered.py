@@ -64,8 +64,10 @@ def visualize_k_layered_graph(G, layers, title):
     - layers: A list of sets, where each set contains nodes for that layer.
     """
     pos = {}
-    layer_gap = 2  # Vertical spacing between layers
-    node_gap = 1.5  # Horizontal spacing within layers
+    # layer_gap = 2  # Vertical spacing between layers
+    layer_gap = 5
+    # node_gap = 1.5  # Horizontal spacing within layers\
+    node_gap = 0.3
 
     # Assign positions for each node
     for i, layer in enumerate(layers):
@@ -82,7 +84,8 @@ def visualize_k_layered_graph(G, layers, title):
     # Draw the graph with enhanced aesthetics
     plt.figure(figsize=(10, 8))
     nx.draw_networkx_edges(G, pos, edge_color="gray", alpha=0.6, width=1.5, arrows=True)
-    nx.draw_networkx_nodes(G, pos, node_size=1500, node_color=node_colors, edgecolors="black")
+    # nx.draw_networkx_nodes(G, pos, node_size=1500, node_color=node_colors, edgecolors="black")
+    nx.draw_networkx_nodes(G, pos, node_size=600, node_color=node_colors, edgecolors="black")
     nx.draw_networkx_labels(G, pos, font_size=12, font_weight="bold")
 
     # Draw layer separators
@@ -94,11 +97,12 @@ def visualize_k_layered_graph(G, layers, title):
     plt.axis("off")
     plt.show()
 
+
 if __name__ == "__main__":
     # Example usage:
-    k = 6  # Number of layers
-    n = 5  # Number of vertices in odd layers
-    m = 3  # Number of vertices in even layers
+    k = 10  # Number of layers
+    n = 6  # Number of vertices in odd layers
+    m = 6  # Number of vertices in even layers
 
     nodes, formatted_edges, G, layers = generate_k_layered_sparse_graph(k, n, m)
     visualize_k_layered_graph(G, layers, "K-Layered Sparse Graph")
