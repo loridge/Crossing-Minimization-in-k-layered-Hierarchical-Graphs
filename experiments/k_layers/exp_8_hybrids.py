@@ -432,29 +432,30 @@ if __name__ == "__main__":
     parsed_data = BaseCutoffHybrid.parse_layers_edges(layers, edges)
     
     #uncommented barysift
-    bary_sift = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=0, capture = 1)
-    barysift_reordered = bary_sift.execute()
-    barysift_reordered_count = total_crossing_count_k_layer(barysift_reordered, edges)
-    print(f"Uncommented BarycenterSifting {barysift_reordered_count}")
+    # bary_sift = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=0, capture = 1)
+    # barysift_reordered,_ = bary_sift.execute()
+    # barysift_reordered_count = total_crossing_count_k_layer(barysift_reordered, edges)
+    # print(f"Uncommented BarycenterSifting {barysift_reordered_count}")
     
-    #commented barysift
-    bary_sifter = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1, capture = 1)
-    barysift_reordereder = bary_sifter.execute()
-    barysift_reordered_counter = total_crossing_count_k_layer(barysift_reordereder, edges)
-    print(f"BarycenterSifting {barysift_reordered_counter}")
+    # #commented barysift
+    # bary_sifter = BarySiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1, capture = 1)
+    # barysift_reordereder,_ = bary_sifter.execute()
+    # barysift_reordered_counter = total_crossing_count_k_layer(barysift_reordereder, edges)
+    # print(f"BarycenterSifting {barysift_reordered_counter}")
 
     # siftbary = SiftingBaryCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1)
     # siftbary_reorder = siftbary.execute()
     # siftbary_reorder_counter = total_crossing_count_k_layer(siftbary_reorder, edges)
     # print(f"SiftBary {siftbary_reorder_counter}")
-    
-    # permusifting = PermuSiftingCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1)
-    # permusifting_reorderer = permusifting.execute()
-    # permusifting_reordered_counter = total_crossing_count_k_layer(permusifting_reorderer, edges)
-    # print(f"Permusifting {permusifting_reordered_counter}")
-    
-    # permubary = PermuBaryCutoffHybrid(layers, edges, l_cutoff=2, parsed_layer_edge_data=parsed_data, comment_out=1)
-    # permubary_reorderer = permubary.execute()
+    permusifting = PermuSiftingCutoffHybrid(layers, edges, l_cutoff=9, parsed_layer_edge_data=parsed_data, comment_out=1, capture=1)
+    start = time.perf_counter()
+    permusifting_reorderer, _ = permusifting.execute()
+    end = time.perf_counter()
+    permusifting_reordered_counter = total_crossing_count_k_layer(permusifting_reorderer, edges)
+    print(f"Permusifting {permusifting_reordered_counter}")
+    print(f"time elapsed {end-start}")
+    # permubary = PermuBaryCutoffHybrid(layers, edges, l_cutoff=9, parsed_layer_edge_data=parsed_data, comment_out=1)
+    # permubary_reorderer, _ = permubary.execute()
     # permubary_reordered_counter = total_crossing_count_k_layer(permubary_reorderer, edges)
     # print(f"Permubary {permubary_reordered_counter}")
     
@@ -472,5 +473,7 @@ if __name__ == "__main__":
     ### new update, added the comment_out for this
     # bary_sift.animate_snapshots() # for observing the behavior
     # bary_sifter.animate_snapshots(0.1)
-    bary_sift.create_animation(filename='barysift_old_imple.mp4')
-    bary_sifter.create_animation(filename='barysift_new_imple.mp4')
+    # bary_sift.create_animation(filename='barysift_old_imple.mp4')
+    # bary_sifter.create_animation(filename='barysift_new_imple.mp4')
+    # bary_sift.create_animation(filename='barysift_old_imple.mp4')
+    permusifting.create_animation(filename='permusifting_new_imple.mp4')

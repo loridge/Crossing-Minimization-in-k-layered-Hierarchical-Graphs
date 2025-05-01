@@ -22,10 +22,10 @@ from exp_8_hybrids import BaseCutoffHybrid, PermuBaryCutoffHybrid, PermuSiftingC
 # https://www.geeksforgeeks.org/python-unzip-a-list-of-tuples/
 
 # === CONFIG ===
-num_samples = 1
+num_samples = 20
 # num_samples=1
 k = 10
-n_range = [4] # 8 dapat, pero 5 muna para pangtest
+n_range = [8] # 8 dapat, pero 5 muna para pangtest
 methods = ['bary_sift', 'sift_bary', 'permu_sift', 'permu_bary']
 # n_range = range(6, 11)  # n = m
 ##### not yet done
@@ -85,7 +85,6 @@ for n in n_range:
             timings_produced[f"{methods[3]}_cutoff_{cutoff}"].append(time_data_permu_bary)
             reduction = 100 * (crossings_orig - count_permu_bary) / crossings_orig if crossings_orig else 0
             reductions[f"{methods[3]}_cutoff_{cutoff}"].append(reduction)
-
     avg_crossings_produced = {
         key: float(np.mean(val)) if val else None
         for key, val in crossings_produced.items()
@@ -123,7 +122,7 @@ for n in n_range:
     plt.grid(True)
     plt.tight_layout()
     plt.savefig("ear_vs_cutoff_lineplot.png", dpi=300)
-    plt.show()
+    # plt.show()
     
     
     # === Aggregate average times per method ===
@@ -184,7 +183,7 @@ for n in n_range:
 
     # Save and display
     plt.savefig("stacked_time_by_algorithm_cutoff.png", dpi=300)
-    plt.show()
+    # plt.show()
     
     plt.figure(figsize=(10, 6))
 
@@ -217,7 +216,7 @@ for n in n_range:
     plt.legend(title="Method", loc='upper left')
     plt.tight_layout()
     plt.savefig("scatter_all_methods.png", dpi=300)
-    plt.show()
+    # plt.show()
 
     # === 2–5. Individual Plots per Method ===
     for method in methods:
@@ -237,7 +236,7 @@ for n in n_range:
         plt.grid(True)
         plt.tight_layout()
         plt.savefig(f"scatter_{method}.png", dpi=300)
-        plt.show()
+        # plt.show()
 
 
     # === EXPORT TO WIDE-FORMAT CSV ===
