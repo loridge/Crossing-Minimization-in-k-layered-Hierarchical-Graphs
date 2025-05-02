@@ -26,10 +26,10 @@ from k_layered import (
 )
 
 # Parameters
-m_values = [4, 6, 8]         # Number of edges
-num_samples = 1             # Number of trials per m
-k = 10                        # Number of layers
-n = 8                        # Number of nodes per layer
+m_values = [4, 6, 8]         # Number of vertices m
+num_samples = 20             # Number of trials per m
+k = 10                       # Number of layers
+n = 8                        # Number of vertices n
 
 # Store results
 raw_crossings = {
