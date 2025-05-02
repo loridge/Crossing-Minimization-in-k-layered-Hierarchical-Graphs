@@ -1,3 +1,26 @@
-slurmstepd: error: *** STEP 88561.0 ON a100gpu1 CANCELLED AT 2025-05-01T16:00:14 ***
-slurmstepd: error: *** JOB 88561 ON a100gpu1 CANCELLED AT 2025-05-01T16:00:14 ***
-srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+does it work
+Experiment 8 starting
+Executing 8
+Generating sample 0
+Generating sample 1
+Generating sample 2
+Generating sample 3
+Generating sample 4
+Generating sample 5
+Generating sample 6
+Generating sample 7
+Generating sample 8
+Generating sample 9
+Generating sample 10
+Generating sample 11
+Generating sample 12
+Generating sample 13
+Generating sample 14
+Generating sample 15
+Generating sample 16
+Generating sample 17
+Generating sample 18
+Generating sample 19
+✅ crossings_produced.csv saved.
+✅ timings_produced.csv saved.
+Experiment 8 Concluded
