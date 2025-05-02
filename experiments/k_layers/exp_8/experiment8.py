@@ -115,13 +115,13 @@ for n in n_range:
     for method in methods:
         plt.plot(range(k), ear_data[method], marker='o', label=method.replace('_', ' ').title())
 
-    plt.title("Empirical Approximation Ratio (EAR) of Averages vs Cutoff Value")
+    plt.title(f"Empirical Approximation Ratio (EAR) of Averages vs Cutoff Value {n}-{n}")
     plt.xlabel("Cutoff Value")
     plt.ylabel("Average EAR (lower is better)")
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    plt.savefig("ear_vs_cutoff_lineplot.png", dpi=300)
+    plt.savefig(f"ear_vs_cutoff_lineplot_{n}-{n}.png", dpi=300)
     # plt.show()
     
     
@@ -182,7 +182,7 @@ for n in n_range:
     plt.tight_layout()
 
     # Save and display
-    plt.savefig("stacked_time_by_algorithm_cutoff.png", dpi=300)
+    plt.savefig(f"stacked_time_by_algorithm_cutoff_{n}-{n}.png", dpi=300)
     # plt.show()
     
     plt.figure(figsize=(10, 6))
@@ -209,13 +209,13 @@ for n in n_range:
                 plt.scatter(avg_time, ear, color=color_map[method], label=method if cutoff == 0 else "")
                 plt.text(avg_time, ear, f"{cutoff}", fontsize=7, ha='left', va='bottom')
 
-    plt.title("All Methods: EAR vs Total Time (Cutoff Labeled)")
+    plt.title(f"All Methods: EAR vs Total Time (Cutoff Labeled) {n}-{n}")
     plt.xlabel("Average Total Time (s)")
     plt.ylabel("EAR (lower is better)")
     plt.grid(True)
     plt.legend(title="Method", loc='upper left')
     plt.tight_layout()
-    plt.savefig("scatter_all_methods.png", dpi=300)
+    plt.savefig(f"scatter_all_methods_{n}-{n}.png", dpi=300)
     # plt.show()
 
     # === 2–5. Individual Plots per Method ===
@@ -230,12 +230,12 @@ for n in n_range:
                 plt.scatter(avg_time, ear, color=color_map[method])
                 plt.text(avg_time, ear, f"{cutoff}", fontsize=8, ha='left', va='bottom')
 
-        plt.title(f"{method.replace('_', ' ').title()}: EAR vs Total Time")
+        plt.title(f"{method.replace('_', ' ').title()}: EAR vs Total Time {n}-{n}")
         plt.xlabel("Average Total Time (s)")
         plt.ylabel("EAR")
         plt.grid(True)
         plt.tight_layout()
-        plt.savefig(f"scatter_{method}.png", dpi=300)
+        plt.savefig(f"scatter_{method}_{n}-{n}.png", dpi=300)
         # plt.show()
 
 
@@ -244,7 +244,7 @@ for n in n_range:
     # -- Convert crossings_produced to DataFrame and export
     crossings_df = pd.DataFrame(crossings_produced)
     crossings_df.insert(0, "sample_id", crossings_df.index)
-    crossings_df.to_csv("crossings_produced.csv", index=False)
+    crossings_df.to_csv(f"crossings_produced_{n}-{n}.csv", index=False)
     print("✅ crossings_produced.csv saved.")
 
     # -- Convert timings_produced to wide-format DataFrame
@@ -265,6 +265,6 @@ for n in n_range:
         timing_rows.append(row)
 
     timings_df = pd.DataFrame(timing_rows)
-    timings_df.to_csv("timings_produced.csv", index=False)
+    timings_df.to_csv(f"timings_produced_{n}-{n}.csv", index=False)
     print("✅ timings_produced.csv saved.")
 print("Experiment 8 Concluded")
