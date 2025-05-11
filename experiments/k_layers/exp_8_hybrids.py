@@ -420,6 +420,33 @@ class SiftingBaryCutoffHybrid(BaseCutoffHybrid):
         else:
             raise ValueError("Invalid phase argument.")
 
+class BaryPermuCutoffHybrid(BaseCutoffHybrid):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+      
+    def reorder_layer(self, free_layer, fixed_layer, edges, phase, direction):
+        if phase == 'pre-cutoff':
+            formatted_edges = parse_edges(edges, fixed_layer, free_layer)
+            return barycenter(free_layer, fixed_layer, formatted_edges)
+        elif phase == 'post-cutoff':
+            reordered_layer, _ = permutation(fixed_layer, free_layer, edges)
+            return reordered_layer
+        else:
+            raise ValueError("Invalid phase argument.")
+
+class SiftingPermuCutoffHybrid(BaseCutoffHybrid):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+      
+    def reorder_layer(self, free_layer, fixed_layer, edges, phase, direction):
+        if phase == 'pre-cutoff':
+            return sifting(free_layer, fixed_layer, edges, direction)
+        elif phase == 'post-cutoff':
+            reordered_layer, _ = permutation(fixed_layer, free_layer, edges)
+            return reordered_layer
+        else:
+            raise ValueError("Invalid phase argument.")
+   
 if __name__ == "__main__":
     k = 10
     n = 7

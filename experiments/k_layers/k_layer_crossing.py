@@ -2,10 +2,17 @@ import sys, os
 import json
 from networkx.readwrite import json_graph
 
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', ))
-
+# parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', ))
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
+
+# debugging module imports
+print("from k layer crossing", parent_dir)
+# print("Current working dir:", os.getcwd)
+for i in sys.path:
+    print(i)
+# print("__file__:", __file__)
     
 from sifting.crossing_function import (
     cross_count_optimized,
