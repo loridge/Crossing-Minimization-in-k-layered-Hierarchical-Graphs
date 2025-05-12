@@ -35,7 +35,7 @@ from exp_8_hybrids import (
 num_samples = 20
 # num_samples=1
 k = 10
-n_range = [8] # 8 dapat, pero 5 muna para pangtest
+n_range = [2] # 8 dapat, pero 5 muna para pangtest
 methods = ['bary_sift', 'sift_bary', 'permu_sift', 'permu_bary', 'bary_permu', 'sifting_permu']
 # n_range = range(6, 11)  # n = m
 exp_code = "exp-9"
@@ -47,6 +47,9 @@ ear_data = {method: [] for method in methods}  # keys like bary_sift, permu_sift
 
 print("Experiment 9 starting")
 for n in n_range:
+    result_folder = f"result-{n}-{n}-{num_samples}"
+    os.makedirs(result_folder, exist_ok=True)
+    
     graph_save = []
     print(f"Executing {n}")
     reductions = {f"{method}_cutoff_{cutoff}": [] for cutoff in range(k) for method in methods} 
@@ -111,6 +114,13 @@ for n in n_range:
             reductions[f"{methods[4]}_cutoff_{cutoff}"].append(reduction)
             
             # -- SiftingPermu Hybrid ---
+            siftingpermu = SiftingPermuCutoffHybrid(layers, edges, l_cutoff=cutoff, parsed_layer_edge_data=parsed_data, comment_out=1)
+            siftingpermu_reordered, time_data_siftingpermu = siftingpermu.execute()
+            count_siftingpermu = total_crossing_count_k_layer(siftingpermu_reordered, edges)
+            crossings_produced[f"{methods[5]}_cutoff_{cutoff}"].append(count_siftingpermu)
+            timings_produced[f"{methods[5]}_cutoff_{cutoff}"].append(time_data_siftingpermu)
+            reduction = 100 * (crossings_orig - count_siftingpermu) / crossings_orig if crossings_orig else 0
+            reductions[f"{methods[5]}_cutoff_{cutoff}"].append(reduction)
             
     avg_crossings_produced = {
         key: float(np.mean(val)) if val else None
@@ -120,6 +130,37 @@ for n in n_range:
     # pprint.pprint(avg_crossings_produced, indent =3, width =200)
     # pprint.pprint(crossings_produced, indent = 4, width =200)
     
+    # === EXPORT TO WIDE-FORMAT CSV ===
+
+    # -- Convert crossings_produced to DataFrame and export
+    crossings_df = pd.DataFrame(crossings_produced)
+    crossings_df.insert(0, "sample_id", crossings_df.index)
+    crossings_df.to_csv(f"{result_folder}/{exp_code}_crossings_produced_{n}-{n}.csv", index=False)
+    print(f"✅ {exp_code} crossings_produced.csv saved.")
+
+    # -- Convert timings_produced to wide-format DataFrame
+    timing_rows = []
+    num_samples = len(crossings_produced['crossings_orig'])  # assumes all lists have same length
+
+    for i in range(num_samples):
+        row = {"sample_id": i}
+        for key, values in timings_produced.items():
+            if i < len(values) and values[i]:  # check bounds and value
+                row[f"{key}_total"] = values[i][0]
+                row[f"{key}_algo1"] = values[i][1]
+                row[f"{key}_algo2"] = values[i][2]
+            else:
+                row[f"{key}_total"] = None
+                row[f"{key}_algo1"] = None
+                row[f"{key}_algo2"] = None
+        timing_rows.append(row)
+
+    timings_df = pd.DataFrame(timing_rows)
+    timings_df.to_csv(f"{result_folder}/{exp_code}_timings_produced_{n}-{n}.csv", index=False)
+    print(f"✅ {exp_code} timings_produced.csv saved.")
+    
+    with open(f"{result_folder}/{exp_code}_{n}-{n}.json", "w") as f:
+        json.dump(graph_save, f, indent=4)
     
     # Calculating EAR vs Cutoff
     
@@ -148,7 +189,7 @@ for n in n_range:
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    plt.savefig(f"{exp_code}_ear_vs_cutoff_lineplot_{n}-{n}.png", dpi=300)
+    plt.savefig(f"{result_folder}/{exp_code}_ear_vs_cutoff_lineplot_{n}-{n}.png", dpi=300)
     # plt.show()
     
     
@@ -209,7 +250,7 @@ for n in n_range:
     plt.tight_layout()
 
     # Save and display
-    plt.savefig(f"{exp_code}_stacked_time_by_algorithm_cutoff_{n}-{n}.png", dpi=300)
+    plt.savefig(f"{result_folder}/{exp_code}_stacked_time_by_algorithm_cutoff_{n}-{n}.png", dpi=300)
     # plt.show()
     
     plt.figure(figsize=(10, 6))
@@ -221,7 +262,10 @@ for n in n_range:
         "bary_sift": "orange",
         "sift_bary": "blue",
         "permu_sift": "green",
-        "permu_bary": "purple"
+        "permu_bary": "purple",
+        'bary_permu': "red", 
+        'sifting_permu': "yellow",
+        
     }
 
     # === 1. General Combined Scatter Plot ===
@@ -242,7 +286,7 @@ for n in n_range:
     plt.grid(True)
     plt.legend(title="Method", loc='upper left')
     plt.tight_layout()
-    plt.savefig(f"{exp_code}_scatter_all_methods_{n}-{n}.png", dpi=300)
+    plt.savefig(f"{result_folder}/{exp_code}_scatter_all_methods_{n}-{n}.png", dpi=300)
     # plt.show()
 
     # === 2–5. Individual Plots per Method ===
@@ -262,40 +306,9 @@ for n in n_range:
         plt.ylabel("EAR")
         plt.grid(True)
         plt.tight_layout()
-        plt.savefig(f"{exp_code}_scatter_{method}_{n}-{n}.png", dpi=300)
+        plt.savefig(f"{result_folder}/{exp_code}_scatter_{method}_{n}-{n}.png", dpi=300)
         # plt.show()
 
 
-    # === EXPORT TO WIDE-FORMAT CSV ===
-
-    # -- Convert crossings_produced to DataFrame and export
-    crossings_df = pd.DataFrame(crossings_produced)
-    crossings_df.insert(0, "sample_id", crossings_df.index)
-    crossings_df.to_csv(f"{exp_code}_crossings_produced_{n}-{n}.csv", index=False)
-    print(f"✅ {exp_code} crossings_produced.csv saved.")
-
-    # -- Convert timings_produced to wide-format DataFrame
-    timing_rows = []
-    num_samples = len(crossings_produced['crossings_orig'])  # assumes all lists have same length
-
-    for i in range(num_samples):
-        row = {"sample_id": i}
-        for key, values in timings_produced.items():
-            if i < len(values) and values[i]:  # check bounds and value
-                row[f"{key}_total"] = values[i][0]
-                row[f"{key}_algo1"] = values[i][1]
-                row[f"{key}_algo2"] = values[i][2]
-            else:
-                row[f"{key}_total"] = None
-                row[f"{key}_algo1"] = None
-                row[f"{key}_algo2"] = None
-        timing_rows.append(row)
-
-    timings_df = pd.DataFrame(timing_rows)
-    timings_df.to_csv(f"{exp_code}_timings_produced_{n}-{n}.csv", index=False)
-    print(f"✅ {exp_code} timings_produced.csv saved.")
-    
-    with open(f"{exp_code}_{n}-{n}.json", "w") as f:
-        json.dump(graph_save, f, indent=4)
     
 print("Experiment 9 Concluded")
