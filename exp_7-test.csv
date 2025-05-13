@@ -1,0 +1,4 @@
+m,avg_crossings_hybrid,avg_crossings_full_bary,avg_crossings_full_permu,percent_hybrid,percent_full_bary,percent_full
+4,21.0,24.0,18.0,116.66666666666667,133.33333333333331,100.0
+6,82.0,93.0,82.0,100.0,113.41463414634146,100.0
+8,180.0,180.0,156.0,115.38461538461537,115.38461538461537,100.0
