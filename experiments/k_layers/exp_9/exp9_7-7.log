@@ -1,0 +1,36 @@
+does it work
+from k layer crossing /mnt/lustre/coe-lstr/home/zcgarais/Crossing-Minimization-in-k-layered-Hierarchical-Graphs
+/mnt/lustre/coe-lstr/home/zcgarais
+/mnt/lustre/coe-lstr/home/zcgarais/Crossing-Minimization-in-k-layered-Hierarchical-Graphs
+/mnt/lustre/coe-lstr/home/zcgarais/Crossing-Minimization-in-k-layered-Hierarchical-Graphs/experiments/k_layers
+/mnt/lustre/coe-lstr/home/zcgarais/Crossing-Minimization-in-k-layered-Hierarchical-Graphs/experiments/k_layers/exp_9
+/opt/miniconda3/lib/python310.zip
+/opt/miniconda3/lib/python3.10
+/opt/miniconda3/lib/python3.10/lib-dynload
+/home/zcgarais/.local/lib/python3.10/site-packages
+/opt/miniconda3/lib/python3.10/site-packages
+Experiment 9 starting
+Executing 7
+Generating sample 0
+Generating sample 1
+Generating sample 2
+Generating sample 3
+Generating sample 4
+Generating sample 5
+Generating sample 6
+Generating sample 7
+Generating sample 8
+Generating sample 9
+Generating sample 10
+Generating sample 11
+Generating sample 12
+Generating sample 13
+Generating sample 14
+Generating sample 15
+Generating sample 16
+Generating sample 17
+Generating sample 18
+Generating sample 19
+✅ exp-9 crossings_produced.csv saved.
+✅ exp-9 timings_produced.csv saved.
+Experiment 9 Concluded

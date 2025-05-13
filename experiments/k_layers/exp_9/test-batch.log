@@ -1,0 +1,16 @@
+/var/spool/slurmd/job91743/slurm_script: line 10: cd: /home/zcgarais/Crossing-Minimization-in-k-layered-Hierarchical-Graphs/experiments/k_layers/exp_9: No such file or directory
+
+EnvironmentLocationNotFound: Not a conda environment: /home/zcgarais/zcgarais-env
+
+Matplotlib created a temporary cache directory at /tmp/matplotlib-69cxqly4 because the default path (/home/zcgarais/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+from k layer crossing /mnt/lustre/coe-lstr/home/zcgarais/Crossing-Minimization-in-k-layered-Hierarchical-Graphs
+/mnt/lustre/coe-lstr/home/zcgarais/Crossing-Minimization-in-k-layered-Hierarchical-Graphs
+/mnt/lustre/coe-lstr/home/zcgarais/Crossing-Minimization-in-k-layered-Hierarchical-Graphs/experiments/k_layers
+/mnt/lustre/coe-lstr/home/zcgarais/Crossing-Minimization-in-k-layered-Hierarchical-Graphs/experiments/k_layers/exp_9
+/opt/miniconda3/lib/python310.zip
+/opt/miniconda3/lib/python3.10
+/opt/miniconda3/lib/python3.10/lib-dynload
+/opt/miniconda3/lib/python3.10/site-packages
