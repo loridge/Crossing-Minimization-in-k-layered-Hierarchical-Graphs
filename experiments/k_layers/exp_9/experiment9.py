@@ -32,10 +32,10 @@ from exp_8_hybrids import (
 # https://www.geeksforgeeks.org/python-unzip-a-list-of-tuples/
 
 # === CONFIG ===
-num_samples = 20
+num_samples = 1
 # num_samples=1
 k = 10
-n_range = [7] # 8 dapat, pero 5 muna para pangtest
+n_range = [4] # 8 dapat, pero 5 muna para pangtest
 methods = ['bary_sift', 'sift_bary', 'permu_sift', 'permu_bary', 'bary_permu', 'sifting_permu']
 # n_range = range(6, 11)  # n = m
 exp_code = "exp-9"
