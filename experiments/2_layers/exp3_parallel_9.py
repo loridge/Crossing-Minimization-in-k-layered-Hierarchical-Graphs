@@ -482,7 +482,7 @@ if __name__ == '__main__':
     print(df.to_string(index=False))
 
     # Save the results to a CSV file
-    df.to_csv(f'exp3_results_{n1}+{n2}.csv', index=False)
-    print(f"Results saved to 'exp3_results_{n1}+{n2}.csv'.")
+    df.to_csv(f'exp3_results_{n1}+{n2}_{num_samples}.csv', index=False)
+    print(f"Results saved to 'exp3_results_{n1}+{n2}_{num_samples}.csv'.")
 
     plot_results_percentage(df, f"With optimal solution, {num_samples} samples")
