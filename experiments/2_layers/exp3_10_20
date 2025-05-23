@@ -1,0 +1,13 @@
+EXP3:Executing 10-10 nodes 
+Total execution time: 17419.66 seconds
+ n1  n2  num_samples  density  pred_density  avg_crossings_original  avg_crossings_barycenter  avg_crossings_median  avg_crossings_sifting  avg_crossings_optimal
+ 10  10           20      0.1           0.1                   17.80                      6.20                  6.10                   6.10                   6.10
+ 10  10           20      0.2           0.2                   82.05                     35.20                 35.55                  34.70                  34.50
+ 10  10           20      0.3           0.3                  174.60                    112.80                116.25                 111.95                 111.95
+ 10  10           20      0.4           0.4                  315.90                    221.60                225.15                 220.75                 220.50
+ 10  10           20      0.5           0.5                  488.50                    391.65                398.50                 390.50                 390.15
+ 10  10           20      0.6           0.6                  704.40                    589.30                598.15                 588.45                 588.45
+ 10  10           20      0.7           0.7                  985.45                    832.95                844.40                 832.95                 832.10
+ 10  10           20      0.8           0.8                 1307.80                   1137.95               1154.35                1138.55                1137.65
+ 10  10           20      0.9           0.9                 1626.50                   1531.75               1543.80                1531.50                1531.35
+Results saved to 'exp3_results_10+10_20.csv'.

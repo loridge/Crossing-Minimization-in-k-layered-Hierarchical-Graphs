@@ -1,0 +1,13 @@
+EXP3:Executing 8-8 nodes 
+Total execution time: 89.47 seconds
+ n1  n2  num_samples  density  pred_density  avg_crossings_original  avg_crossings_barycenter  avg_crossings_median  avg_crossings_sifting  avg_crossings_optimal
+  8   8           20 0.109375           0.1                    8.75                      1.90                  1.90                   1.90                   1.90
+  8   8           20 0.203125           0.2                   29.30                     13.60                 13.60                  13.45                  13.45
+  8   8           20 0.312500           0.3                   73.55                     41.80                 42.65                  41.50                  41.45
+  8   8           20 0.406250           0.4                  126.65                     87.25                 89.45                  86.30                  86.30
+  8   8           20 0.500000           0.5                  191.70                    137.05                139.65                 136.90                 136.85
+  8   8           20 0.609375           0.6                  288.20                    220.95                225.70                 220.85                 220.85
+  8   8           20 0.703125           0.7                  391.15                    318.85                322.90                 318.75                 318.60
+  8   8           20 0.812500           0.8                  505.00                    456.20                462.20                 456.20                 456.10
+  8   8           20 0.906250           0.9                  639.60                    595.55                598.20                 595.55                 595.55
+Results saved to 'exp3_results_8+8_20.csv'.
