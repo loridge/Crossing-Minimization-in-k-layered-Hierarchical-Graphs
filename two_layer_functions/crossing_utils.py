@@ -1,5 +1,8 @@
 from typing import Dict, List
 
+# Also implements the unoptimized crossing function the paper of Simon Hol (2024)
+# Stale code
+
 def node_neighbors(target: str, edges: list, fixed_layer_nodes: List[str]) -> list[str]:
     """
     Find all neighbors of a target node in a list of edges.

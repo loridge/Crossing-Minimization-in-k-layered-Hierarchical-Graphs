@@ -12,11 +12,11 @@ if parent_dir not in sys.path:
 # for i in sys.path:
 #     print(i)
 
-from sifting import (
+from two_layer_functions import (
     sifting,
 )
 
-from bary_med.two_layer_barycenter import (
+from two_layer_functions.two_layer_barycenter import (
     barycenter,
     parse_edges,
     permutation,

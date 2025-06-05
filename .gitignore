@@ -14,4 +14,5 @@ env/
 .idea/
 .vscode/
 
+# Ignore SLURM files
 *.batch

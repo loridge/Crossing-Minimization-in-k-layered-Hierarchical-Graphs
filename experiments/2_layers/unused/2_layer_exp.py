@@ -14,7 +14,7 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, parent_dir)
 
 from utility.bipartite_graph_generator import generate_bipartite_graph, visualize_bipartite_graph, count_crossings, update_positions, plot_results
-from bary_med.two_layer_barycenter import barycenter, parse_edges, median, draw_horizontal_bipartite
+from two_layer_functions.two_layer_barycenter import barycenter, parse_edges, median, draw_horizontal_bipartite
 # from edgedensity import generator_bip_graph
 from sifting.sifting_2 import sifting
 from sifting.crossing_function.crossing_func import cross_count

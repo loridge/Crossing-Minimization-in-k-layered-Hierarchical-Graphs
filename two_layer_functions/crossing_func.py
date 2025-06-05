@@ -80,15 +80,18 @@ def binary_search_first_smaller(arr, v, lower_bound, upper_bound, index_referenc
 
 
 def cross_count_optimized(fixed_layer: list[str], free_layer: list[str], edges: list):
-    """Implements the crossing function made by Simon Hol (2024)
+    """Implements the crossing function made by Simon Hol (2024). Calculate the number of edge crossings between two layers in a bipartite graph. 
+    This function counts all of the crossings present in a bipartite graph. The function takes two lists of node labels representing two layers of the graph and the positional data of the nodes in the Cartesian plane.
+    U is free, L is fixed. node u belongs to free_layer. node v belongs to fixed_layer.
 
     Args:
-        fixed_layer (list[str]): _description_
-        free_layer (list[str]): _description_
-        edges (list): Array of {'nodes':[node1:str, node2:str]} objects
+        fixed_layer (list[str]): List of node labels in the fixed layer. e.g. ["u2", "u3", "u4"]
+        free_layer (list[str]): List of node labels in the free layer. e.g. ["u2", "u3", "u4"]
+        edges (list): Array of {'nodes':[node1:str, node2:str]} objects that represents edges
     Returns:
-        _type_: _description_
+        int: The total number of edge crossings between the two layers.
     """
+    # Reference: https://studenttheses.uu.nl/bitstream/handle/20.500.12932/46720/final_Bachelor_Thesis_Mathematics.pdf?sequence=1&isAllowed=y
     crossing_total = 0
     
     fixed_layer = [f"u{node}" if isinstance(node, int) else node for node in list(fixed_layer) ]

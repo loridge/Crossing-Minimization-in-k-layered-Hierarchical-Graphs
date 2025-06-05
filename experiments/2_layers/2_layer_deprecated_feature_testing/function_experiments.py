@@ -17,7 +17,7 @@ for i in sys.path:
         # print(i)
         pass
 
-from bary_med.two_layer_barycenter import barycenter, parse_edges, median
+from two_layer_functions.two_layer_barycenter import barycenter, parse_edges, median
 from sifting.sifting_2 import sifting
 from utility.bipartite_graph_generator import (
     count_crossings,

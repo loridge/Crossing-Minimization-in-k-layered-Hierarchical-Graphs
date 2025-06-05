@@ -1,6 +1,6 @@
 # Crossing-Minimization-in-k-layered-Hierarchical-Graphs
 
-A project for CS 198/199 under the Algorithms and Complexity Laboratory - UP Diliman
+An undergraduate thesis project for CS 198/199 under the Algorithms and Complexity Laboratory - UP Diliman. 
 
 
 
@@ -15,9 +15,10 @@ Element naming conventions:
 
 the rest are scratch files or whatnot,
 
-## Major Bugs: 
--  verify behavior of code because Python is neither pass-by-value nor pass-by-reference
-- N/A
-
-# Dataset used
-- the dataset used is made by Bartolomeo et al. https://osf.io/preprints/osf/qdyt9
+# How to run the code
+# Required dependencies/libraries
+# Brief description of file structure and purpose
+# Scripts for data preprocessing, training, evaluation, and visualization
+refer t
+# Configuration files (e.g., .json, .yaml, .ini) for reproducibility
+N/A

@@ -14,7 +14,7 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
-from bary_med.two_layer_barycenter import barycenter, parse_edges, median
+from two_layer_functions.two_layer_barycenter import barycenter, parse_edges, median
 from utility.bipartite_graph_generator import (
     count_crossings,
     update_positions,

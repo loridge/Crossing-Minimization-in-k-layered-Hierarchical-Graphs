@@ -15,18 +15,18 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
-from bary_med.two_layer_barycenter import barycenter, parse_edges, median
-from utility.bipartite_graph_generator import (
+from two_layer_functions.two_layer_barycenter import barycenter, parse_edges, median
+from two_layer_functions.bipartite_graph_generator import (
     count_crossings,
     update_positions,
     plot_results,
     generate_bipartite_graph,
     visualize_bipartite_graph
 )
-from sifting.sifting_2 import sifting
-from branch_bound import branch_and_bound_oscm
+from two_layer_functions.sifting_2 import sifting
+# from branch_bound import branch_and_bound_oscm
 
-from sifting.crossing_function.crossing_func import cross_count, cross_count_optimized
+from two_layer_functions.crossing_func import cross_count, cross_count_optimized
 
 vertex_counts = [10,]  # Example vertex counts for testing
 num_samples = 1  # Number of samples per vertex count

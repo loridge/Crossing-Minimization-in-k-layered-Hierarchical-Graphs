@@ -1,0 +1,1 @@
+The files in this subfolder may be stale result files.

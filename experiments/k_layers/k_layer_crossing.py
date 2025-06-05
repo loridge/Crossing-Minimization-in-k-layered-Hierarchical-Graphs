@@ -42,7 +42,7 @@ def total_crossing_count_k_layer(layers, edges):
 def total_crossing_count_k_layers_speedup(layers, edges):
     #   reorderable layers = layers - 1 
     #   
-    #
+    #   Unimplemented. 
     #
     #
     #
