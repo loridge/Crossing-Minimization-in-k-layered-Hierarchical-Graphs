@@ -1,6 +1,6 @@
 import os
 import sys
-from bipartite_graph_generator import forced_density_gen_bip_graph, visualize_bipartite_graph
+from .bipartite_graph_generator import forced_density_gen_bip_graph, visualize_bipartite_graph
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if parent_dir not in sys.path:

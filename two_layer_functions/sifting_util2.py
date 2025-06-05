@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import json
 ###
 
-from .crossing_function import cross_count
+from .crossing_func import cross_count
 
 # Update positions based on the minimized layer order
 

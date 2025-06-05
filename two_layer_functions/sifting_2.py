@@ -3,8 +3,8 @@ from typing import Union, List, Set
 # import bisect 
 # import copy
 
-from sifting.crossing_function.crossing_utils import node_neighbors
-from .crossing_function import cross_count, cross_count_optimized
+from .crossing_utils import node_neighbors
+from .crossing_func import cross_count, cross_count_optimized
 from .sifting_util2 import do_sifting
 # Sifting function
 def sifting_2(free_layer: list[str], fixed_layer: list[str], edges: list, verbose=0,) -> list:
