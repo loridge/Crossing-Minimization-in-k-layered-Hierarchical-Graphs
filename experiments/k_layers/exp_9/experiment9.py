@@ -18,7 +18,7 @@ if parent_dir not in sys.path:
 from k_layered_heuristics import hybrid_2
 from k_layer_crossing import total_crossing_count_k_layer
 from k_layered import generate_k_layered_sparse_graph
-from exp_8_hybrids import (
+from experiments.k_layers.hybrid_algorithms import (
     BaseCutoffHybrid, 
     PermuBaryCutoffHybrid, 
     SiftingBaryCutoffHybrid, 
