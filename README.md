@@ -130,7 +130,7 @@ The project tree is structured below. Result files and unused files are omitted 
 The folder `two_layer_functions` contains the necessary functions that are used for other functions and code in the two-layer and k-layer crossing minimization sectors. It includes crossing minimization heuristics, graph visualizers, and graph generators. The most notable files and some of the relevant functions within are outlined below:
 
 - `two_layer_barycenter.py`
-    - functions for `median`, `barycenter`, and `permutation`. `parse_edges` function is a edges data preprocessing step for the `median` and `barycenter` functions. 
+    - functions for `median`, `barycenter`, and `permutation`. `parse_edges` function is an edges data preprocessing step for the `median` and `barycenter` functions. 
 - `crossing_func.py`
     - contains `cross_count_optimized` function, the crossing function.
 - `sifting_2.py`
