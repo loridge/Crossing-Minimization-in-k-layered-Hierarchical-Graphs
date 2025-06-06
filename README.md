@@ -1,4 +1,4 @@
-# CS198/199: Crossing-Minimization-in-k-layered-Hierarchical-Graphs
+# CS198/199: Crossing Minimization in k-layered Hierarchical Graphs: A Hybrid Approach
 
 An undergraduate thesis project for CS 198/199 2024-2025 under the Algorithms and Complexity Laboratory - UP Diliman. 
 | Researchers                  | Advisers                        |
