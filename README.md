@@ -1,8 +1,12 @@
 # Crossing-Minimization-in-k-layered-Hierarchical-Graphs
 
 An undergraduate thesis project for CS 198/199 under the Algorithms and Complexity Laboratory - UP Diliman. 
+| Researchers                  | Advisers                        |
+|-----------------------------|----------------------------------|
+| Loridge Anne A. Gacho            | Asst Prof. Nestine Hope S. Hernandez              |
+| Zandrew Peter C. Garais       | Asst Prof. Jhoirene B. Clemente               |
 
-Abstract: 
+## Abstract
 
 Minimizing edge crossings in graph drawings is crucial for improving readability in applications such as circuit schematics and transportation maps. One important variant is the `k-layered hierarchical crossing minimization` problem, which seeks optimal vertex orderings across all layers of a k-layered graph to reduce edge crossings. In this study, we explore a hybrid layer-by-layer approach that combines two one-sided bipartite crossing minimization (OSCM) heuristics, specifically, barycenter, permutation, and sifting algorithms. These heuristics are applied above and below a specified `cut-off index`, effectively dividing the graph into upper and lower regions. 
 
