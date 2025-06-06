@@ -35,6 +35,88 @@ To install the libraries: run `pip install -r requirements.txt` in the topmost d
 
 ## Brief description of file structure and purpose
 
+The project tree is structured below. Result files and unused files are omitted for brevity.  
+
+```bash
+.
+├── LICENSE
+├── README.md
+├── experiments
+│   ├── 2_layers
+│   │   ├── deprecated_feature_testing
+│   │   ├── exp_1
+│   │   │   ├── 2_layer_exp_parallel.py
+│   │   │   ├── exp1_v1_v2_sparse.ipynb
+│   │   │   └── exp1_v1_v2_sparse_helper.py
+│   │   ├── exp_1-2-3_results
+│   │   │   ├── README.md
+│   │   │   ├── exp_1
+│   │   │   ├── exp_2
+│   │   │   ├── exp_3
+│   │   │   └── unused
+│   │   ├── exp_2
+│   │   │   ├── exp2_increasing_density.ipynb
+│   │   │   ├── summary_to_graphs.py
+│   │   │   └── summary_to_tabular.py
+│   │   ├── exp_3
+│   │   │   └── exp3_parallel_9.py
+│   │   ├── exp_3_final_results
+│   │   ├── exp_4
+│   │   │   └── exp4_n-m_20.py
+│   │   ├── exp_4_results
+│   │   │   ├── exp4_n-m_1
+│   │   │   │   └── visualize_mid_density_results_n10.py
+│   │   │   └── exp4_n-m_20
+│   │   ├── old_heuristic_visualization_test
+│   │   ├── slurm_logs
+│   │   └── unused
+│   ├── experiments.md
+│   └── k_layers
+│       ├── __init___.py
+│       ├── animated_k_layer
+│       ├── exp_5
+│       │   ├── exp_5_boxplot.py
+│       │   ├── exp_5_result_raw
+│       │   ├── exp_5_result_visuals
+│       │   └── experiment_5.py
+│       ├── exp_6
+│       │   └── experiment_6.py
+│       ├── exp_7
+│       │   ├── exp7_4-6-8_test_results
+│       │   ├── exp7_test_results
+│       │   ├── experiment_7.py
+│       │   ├── final_exp7_results
+│       │   └── init_exp7_results
+│       ├── exp_8
+│       │   ├── experiment8.py
+│       │   ├── inherit.py
+│       ├── exp_9
+│       │   ├── exp_9.md
+│       │   ├── experiment9.py
+│       │   ├── networkx_to_json
+│       │   ├── result-2-2-20
+│       │   ├── result-3-3-20
+│       │   ├── result-8-8-20
+│       │   ├── result-8-8-20-Copy1
+│       │   └── some_slurm_hpc_stale_logs
+│       ├── hybrid_algorithms.py
+│       ├── k_layer_crossing.py
+│       ├── k_layered.py
+│       ├── k_layered_heuristics.py
+│       └── unused
+│           ├── README.md
+└── two_layer_functions
+    ├── README.md
+    ├── __init__.py
+    ├── bipartite_graph_generator.py
+    ├── crossing_func.py
+    ├── crossing_utils.py
+    ├── sifting_2.py
+    ├── sifting_util2.py
+    ├── two_layer_barycenter.py
+    ├── unused
+    └── visualize_test.py
+```
 
 ## Scripts for data preprocessing, training, evaluation, and visualization
 Some of the code that do data postprocessing and visualization are found within the files that execute experiments or in adjacent Python files.
